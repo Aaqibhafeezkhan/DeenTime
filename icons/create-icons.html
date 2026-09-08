@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create PWA Icons</title>
+    <style>
+        body { font-family: system-ui, sans-serif; padding: 20px; text-align: center; }
+        canvas { display: none; }
+        .status { margin: 20px 0; padding: 15px; background: #f0f0f0; border-radius: 8px; }
+        .success { color: green; }
+        button { padding: 15px 30px; font-size: 16px; background: #0d9488; color: white; border: none; border-radius: 8px; cursor: pointer; }
+        button:hover { background: #0f766e; }
+    </style>
+</head>
+<body>
+    <h1>Azaan Pro - Icon Generator</h1>
+    <p>This will create all required PWA icon files.</p>
+    <button onclick="generateIcons()">Generate Icons</button>
+    <div id="status" class="status"></div>
+    <canvas id="canvas"></canvas>
+    
+    <script>
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const status = document.getElementById('status');
+        
+        function generateIcons() {
+            status.innerHTML = '<p>Generating icons...</p>';
+            
+            sizes.forEach((size, index) => {
+                setTimeout(() => {
+                    canvas.width = size;
+                    canvas.height = size;
+                    
+                    // Clear
+                    ctx.clearRect(0, 0, size, size);
+                    
+                    // Background gradient
+                    const gradient = ctx.createLinearGradient(0, 0, size, size);
+                    gradient.addColorStop(0, '#0d9488');
+                    gradient.addColorStop(1, '#059669');
+                    
+                    // Rounded rect
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.roundRect(0, 0, size, size, size * 0.2);
+                    ctx.fill();
+                    
+                    // Star and crescent symbol
+                    ctx.fillStyle = 'white';
+                    ctx.font = `bold ${size * 0.55}px Arial, sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('☪', size / 2, size / 2 + size * 0.05);
+                    
+                    // Download
+                    const link = document.createElement('a');
+                    link.download = `icon-${size}x${size}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    status.innerHTML += `<p class="success">Created icon-${size}x${size}.png</p>`;
+                    
+                    if (index === sizes.length - 1) {
+                        status.innerHTML += '<h3 class="success">All icons generated! Check your downloads folder.</h3><p>Move all PNG files to the <strong>icons/</strong> folder.</p>';
+                    }
+                }, index * 200);
+            });
+        }
+    </script>
+</body>
+</html>
