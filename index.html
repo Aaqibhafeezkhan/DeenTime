@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0F766E">
+    <meta name="description" content="Islamic Prayer Times, Qibla Direction, Hijri Calendar, and more">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Azaan Pro - Islamic Prayer Times</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230d9488' width='100' height='100' rx='20'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>☪</text></svg>">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Azaan Pro">
+    <meta name="msapplication-TileColor" content="#0F766E">
+    <meta name="msapplication-TileImage" content="icons/icon-144x144.png">
+    <meta name="msapplication-config" content="browserconfig.xml">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="h-full bg-gradient-to-br from-teal-50 via-emerald-50 to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
+    <div id="app" class="min-h-screen pb-20">
+        <div id="loading" class="fixed inset-0 bg-white dark:bg-gray-900 z-50 flex flex-col items-center justify-center">
+            <div class="relative">
+                <div class="w-20 h-20 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="fas fa-mosque text-teal-600 text-2xl"></i>
+                </div>
+            </div>
+            <p class="mt-6 text-gray-600 dark:text-gray-300 text-lg">Loading prayer times...</p>
+        </div>
+
+        <header class="bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-lg">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-mosque text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold">Azaan Pro</h1>
+                            <p id="currentDate" class="text-xs opacity-90">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="themeToggle" class="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="locationDisplay" class="mt-3 flex items-center gap-2 text-sm opacity-90">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span id="locationText">Detecting location...</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="container mx-auto px-4 py-4 space-y-4">
+            <div class="bg-gradient-to-r from-teal-500 to-emerald-500 rounded-2xl p-6 text-white shadow-lg">
+                <div class="text-center">
+                    <p class="text-sm opacity-90 mb-1">Next Prayer</p>
+                    <h2 id="nextPrayerName" class="text-3xl font-bold mb-2">Fajr</h2>
+                    <div id="countdown" class="text-4xl font-mono font-bold">00:00:00</div>
+                    <p id="nextPrayerTime" class="text-sm opacity-90 mt-2">--:--</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md text-center">
+                    <i class="fas fa-clock text-teal-500 text-xl mb-2"></i>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Current Time</p>
+                    <p id="currentTime" class="text-xl font-bold text-gray-800 dark:text-white">--:--</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md text-center">
+                    <i class="fas fa-moon text-teal-500 text-xl mb-2"></i>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Hijri Date</p>
+                    <p id="hijriDate" class="text-sm font-bold text-gray-800 dark:text-white">--</p>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden">
+                <div class="p-4 border-b border-gray-100 dark:border-gray-700">
+                    <h3 class="font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                        <i class="fas fa-praying-hands text-teal-500"></i>
+                        Prayer Times
+                    </h3>
+                </div>
+                <div id="prayerTimes" class="divide-y divide-gray-100 dark:divide-gray-700"></div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-3">
+                <button onclick="showTab('qibla')" class="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-md flex flex-col items-center gap-1 hover:bg-teal-50 dark:hover:bg-gray-700 transition">
+                    <i class="fas fa-compass text-teal-500 text-xl"></i>
+                    <span class="text-xs text-gray-600 dark:text-gray-300">Qibla</span>
+                </button>
+                <button onclick="showTab('calendar')" class="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-md flex flex-col items-center gap-1 hover:bg-teal-50 dark:hover:bg-gray-700 transition">
+                    <i class="fas fa-calendar-alt text-teal-500 text-xl"></i>
+                    <span class="text-xs text-gray-600 dark:text-gray-300">Calendar</span>
+                </button>
+                <button onclick="showTab('tasbih')" class="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-md flex flex-col items-center gap-1 hover:bg-teal-50 dark:hover:bg-gray-700 transition">
+                    <i class="fas fa-beads text-teal-500 text-xl"></i>
+                    <span class="text-xs text-gray-600 dark:text-gray-300">Tasbih</span>
+                </button>
+                <button onclick="showTab('names')" class="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-md flex flex-col items-center gap-1 hover:bg-teal-50 dark:hover:bg-gray-700 transition">
+                    <i class="fas fa-star text-teal-500 text-xl"></i>
+                    <span class="text-xs text-gray-600 dark:text-gray-300">99 Names</span>
+                </button>
+            </div>
+
+            <div id="qiblaPanel" class="hidden bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
+                <h3 class="font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-compass text-teal-500"></i>
+                    Qibla Direction
+                </h3>
+                <div class="relative w-48 h-48 mx-auto">
+                    <div id="compass" class="w-full h-full rounded-full border-4 border-teal-500 relative bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800">
+                        <div class="absolute top-2 left-1/2 -translate-x-1/2 text-xs font-bold text-red-500">N</div>
+                        <div class="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs font-bold text-gray-500">S</div>
+                        <div class="absolute left-2 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-500">W</div>
+                        <div class="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-500">E</div>
+                        <div id="qiblaArrow" class="absolute top-1/2 left-1/2 w-1 h-20 bg-gradient-to-t from-teal-500 to-teal-300 origin-bottom -translate-x-1/2 -translate-y-full rounded-full transition-transform duration-500" style="transform: translate(-50%, -100%) rotate(0deg);">
+                            <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-8 border-l-transparent border-r-transparent border-b-teal-500"></div>
+                        </div>
+                        <div class="absolute top-1/2 left-1/2 w-4 h-4 bg-teal-600 rounded-full -translate-x-1/2 -translate-y-1/2 shadow-lg"></div>
+                    </div>
+                </div>
+                <p id="qiblaDegree" class="text-center mt-4 text-2xl font-bold text-teal-600">0°</p>
+                <p class="text-center text-sm text-gray-500 dark:text-gray-400 mt-1">from North</p>
+                <button id="enableCompass" class="w-full mt-4 bg-teal-500 text-white py-2 rounded-lg hover:bg-teal-600 transition">
+                    Enable Device Compass
+                </button>
+            </div>
+
+            <div id="calendarPanel" class="hidden bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-md">
+                <div class="flex items-center justify-between mb-4">
+                    <button onclick="changeMonth(-1)" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center">
+                        <i class="fas fa-chevron-left text-gray-600 dark:text-gray-300"></i>
+                    </button>
+                    <h3 id="calendarMonth" class="font-bold text-gray-800 dark:text-white"></h3>
+                    <button onclick="changeMonth(1)" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center">
+                        <i class="fas fa-chevron-right text-gray-600 dark:text-gray-300"></i>
+                    </button>
+                </div>
+                <div id="calendarGrid" class="grid grid-cols-7 gap-1 text-center text-sm"></div>
+            </div>
+
+            <div id="tasbihPanel" class="hidden bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
+                <h3 class="font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-beads text-teal-500"></i>
+                    Digital Tasbih
+                </h3>
+                <div class="text-center">
+                    <div id="tasbihCount" class="text-6xl font-bold text-teal-600 mb-2">0</div>
+                    <div class="flex items-center justify-center gap-2 mb-6">
+                        <span class="text-sm text-gray-500">Target:</span>
+                        <button onclick="setTasbihTarget(33)" class="tasbih-target px-3 py-1 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 text-sm font-medium active">33</button>
+                        <button onclick="setTasbihTarget(99)" class="tasbih-target px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-sm font-medium">99</button>
+                        <button onclick="setTasbihTarget(100)" class="tasbih-target px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-sm font-medium">100</button>
+                    </div>
+                    <div class="flex gap-3 justify-center">
+                        <button onclick="incrementTasbih()" class="w-24 h-24 rounded-full bg-gradient-to-br from-teal-500 to-emerald-500 text-white text-2xl shadow-lg active:scale-95 transition flex items-center justify-center">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button onclick="resetTasbih()" class="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 shadow-md active:scale-95 transition flex items-center justify-center">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                    </div>
+                    <div class="mt-4 flex gap-2 justify-center">
+                        <button onclick="setDhikr('SubhanAllah')" class="dhikr-btn px-4 py-2 rounded-lg bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 text-sm font-medium active">SubhanAllah</button>
+                        <button onclick="setDhikr('Alhamdulillah')" class="dhikr-btn px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-sm font-medium">Alhamdulillah</button>
+                        <button onclick="setDhikr('Allahu Akbar')" class="dhikr-btn px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-sm font-medium">Allahu Akbar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="namesPanel" class="hidden bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-md">
+                <h3 class="font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-star text-teal-500"></i>
+                    99 Names of Allah
+                </h3>
+                <div id="namesList" class="grid grid-cols-3 gap-2 max-h-96 overflow-y-auto"></div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-md">
+                <h3 class="font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-cog text-teal-500"></i>
+                    Settings
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm text-gray-600 dark:text-gray-400 mb-2">Calculation Method</label>
+                        <select id="calcMethod" class="w-full p-3 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                            <option value="MWL">Muslim World League</option>
+                            <option value="ISNA">Islamic Society of North America</option>
+                            <option value="Egypt">Egyptian General Authority</option>
+                            <option value="Makkah">Umm al-Qura, Makkah</option>
+                            <option value="Karachi">University of Karachi</option>
+                            <option value="Tehran">Institute of Geophysics, Tehran</option>
+                            <option value="Jafari">Shia Ithna-Ashari (Jafari)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-600 dark:text-gray-400 mb-2">Madhab</label>
+                        <select id="madhab" class="w-full p-3 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                            <option value="Standard">Standard (Shafi, Maliki, Hanbali)</option>
+                            <option value="Hanafi">Hanafi</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Notifications</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="notifications" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-500"></div>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">24-Hour Format</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="timeFormat" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-500"></div>
+                        </label>
+                    </div>
+                    <button onclick="detectLocation()" class="w-full bg-teal-500 text-white py-3 rounded-lg hover:bg-teal-600 transition flex items-center justify-center gap-2">
+                        <i class="fas fa-location-arrow"></i>
+                        Detect My Location
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg">
+            <div class="container mx-auto">
+                <div class="flex justify-around py-2">
+                    <button onclick="showMain()" class="nav-btn flex flex-col items-center gap-1 p-2 text-teal-600 dark:text-teal-400 active">
+                        <i class="fas fa-home text-lg"></i>
+                        <span class="text-xs">Home</span>
+                    </button>
+                    <button onclick="showTab('qibla')" class="nav-btn flex flex-col items-center gap-1 p-2 text-gray-400 dark:text-gray-500">
+                        <i class="fas fa-compass text-lg"></i>
+                        <span class="text-xs">Qibla</span>
+                    </button>
+                    <button onclick="showTab('tasbih')" class="nav-btn flex flex-col items-center gap-1 p-2 text-gray-400 dark:text-gray-500">
+                        <i class="fas fa-beads text-lg"></i>
+                        <span class="text-xs">Tasbih</span>
+                    </button>
+                    <button onclick="showTab('more')" class="nav-btn flex flex-col items-center gap-1 p-2 text-gray-400 dark:text-gray-500">
+                        <i class="fas fa-ellipsis-h text-lg"></i>
+                        <span class="text-xs">More</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <audio id="azaanPlayer" preload="none"></audio>
+    </div>
+
+    <script src="praytimes.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
