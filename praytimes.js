@@ -53,7 +53,6 @@ function PrayTimes(method) {
     var setting = {};
     var offset = {};
 
-    var numIterations = 1;
     var lat, lng, elv, timeZone, jDate;
 
     for (var i in methods[calcMethod].params) {
@@ -241,10 +240,10 @@ function PrayTimes(method) {
 
     function computePrayerTimes(times) {
         times = sunPositionTime(jDate, times);
-        times = asrTime(math.arccot(setting.asrMethod || 1 + math.tan(math.dtr(lat - sunPosition(jDate).dec)), times.dhuhr), times);
-        times = hourAngleTime(setting.fajr, times.fajr, times);
-        times = hourAngleTime(setting.isha, times.isha, times);
-        times = hourAngleTime(setting.imsak || setting.fajr - 10 / 60.0, times.imsak, times);
+        times.asr = asrTime(setting.asrMethod || 1, times.asr);
+        times.fajr = hourAngleTime(setting.fajr, times.fajr);
+        times.isha = hourAngleTime(setting.isha, times.isha);
+        times.imsak = hourAngleTime(setting.imsak || setting.fajr - 10 / 60.0, times.imsak);
         return times;
     }
 
@@ -256,17 +255,13 @@ function PrayTimes(method) {
     }
 
     function asrTime(asrFactor, time) {
-        var decl = sunPosition(jDate + time).dec;
+        var decl = sunPosition(jDate + time).decl;
         var angle = -math.arccot(asrFactor + math.tan(math.dtr(lat - decl)));
         return computeTime(angle, jDate);
     }
 
-    function hourAngleTime(angle, time, times) {
-        var decl = sunPosition(jDate + time).dec;
-        var angle1 = 90 + angle;
-        var angle2 = angle1 + 0.0347 * Math.sqrt(elv);
-        var angleFinal = angle2;
-        return computeTime(angleFinal, jDate);
+    function hourAngleTime(angle, time) {
+        return computeTime(90 + angle, jDate);
     }
 
     function sunPosition(jd) {
@@ -300,7 +295,6 @@ function PrayTimes(method) {
     }
 
     function adjustHighLats(times) {
-        var params = { night: math.fixHour(times.sunset - times.sunrise), fajr: setting.fajr, isha: setting.isha };
         var nightTime = math.diff(times.sunset, times.sunrise);
         times.imsak = adjustHLTime(times.imsak, times.sunrise, parseFloat(setting.imsak) || 0, nightTime, 'ccw');
         times.fajr = adjustHLTime(times.fajr, times.sunrise, parseFloat(setting.fajr) || 0, nightTime, 'ccw');
