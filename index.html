@@ -221,7 +221,7 @@
                         <span class="text-sm text-gray-600 dark:text-gray-400">24-Hour Format</span>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="timeFormat" class="sr-only peer">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-500"></div>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-500"></div>
                         </label>
                     </div>
                     <button onclick="detectLocation()" class="w-full bg-teal-500 text-white py-3 rounded-lg hover:bg-teal-600 transition flex items-center justify-center gap-2">
@@ -260,5 +260,209 @@
 
     <script src="praytimes.js"></script>
     <script src="script.js"></script>
+    <script>
+        (function () {
+            function getBrowserTimeZone() {
+                return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+            }
+
+            function getTimeZoneOffsetHours(timeZone, date) {
+                const parts = new Intl.DateTimeFormat('en-US', { timeZone, timeZoneName: 'longOffset' }).formatToParts(date);
+                const value = parts.find(part => part.type === 'timeZoneName')?.value || 'GMT';
+                const match = value.match(/GMT([+-])(\\d{2})(?::(\\d{2}))?/);
+                if (!match) return 0;
+                const sign = match[1] === '+' ? 1 : -1;
+                return sign * (Number(match[2]) + Number(match[3] || 0) / 60);
+            }
+
+            function isValidTimeZone(timeZone) {
+                try {
+                    new Intl.DateTimeFormat('en-US', { timeZone }).format();
+                    return true;
+                } catch (error) {
+                    return false;
+                }
+            }
+
+            function syncTimeZone() {
+                if (!userSettings.timeZone || !isValidTimeZone(userSettings.timeZone)) {
+                    userSettings.timeZone = getBrowserTimeZone();
+                }
+                const label = document.getElementById('timezoneText');
+                if (label) {
+                    const offset = getTimeZoneOffsetHours(userSettings.timeZone, new Date());
+                    const sign = offset >= 0 ? '+' : '-';
+                    const absolute = Math.abs(offset);
+                    const hours = Math.floor(absolute);
+                    const minutes = Math.round((absolute - hours) * 60);
+                    label.textContent = `${userSettings.timeZone} (UTC${sign}${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')})`;
+                }
+            }
+
+            function calculateWithSelectedTimeZone() {
+                const date = new Date();
+                const timeZone = userSettings.timeZone || getBrowserTimeZone();
+                const timezoneOffset = getTimeZoneOffsetHours(timeZone, date);
+                const times = prayerTimesCalc.getTimes(
+                    [date.getFullYear(), date.getMonth() + 1, date.getDate()],
+                    [userSettings.location.lat, userSettings.location.lng],
+                    timezoneOffset,
+                    0,
+                    userSettings.timeFormat
+                );
+
+                currentPrayerTimes = {
+                    fajr: times.fajr,
+                    sunrise: times.sunrise,
+                    dhuhr: times.dhuhr,
+                    asr: times.asr,
+                    maghrib: times.maghrib,
+                    isha: times.isha
+                };
+
+                renderPrayerTimes();
+                updateNextPrayer();
+                calculateQibla();
+                document.getElementById('loading').style.display = 'none';
+                syncTimeZone();
+            }
+
+            function updateLocationName(lat, lng) {
+                getLocationName(lat, lng);
+            }
+
+            function createLocationSettings() {
+                const settingsHeading = Array.from(document.querySelectorAll('h3')).find(element => element.textContent.trim() === 'Settings');
+                const settingsPanel = settingsHeading?.closest('.bg-white');
+                const settingsSpace = settingsPanel?.querySelector('.space-y-4');
+                if (!settingsSpace || document.getElementById('locationSettings')) return;
+
+                const section = document.createElement('div');
+                section.id = 'locationSettings';
+                section.className = 'pt-2 border-t border-gray-100 dark:border-gray-700';
+                section.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Prayer Location</label>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Review or set the coordinates used for prayer calculations.</p>
+                        </div>
+                        <span id="timezoneText" class="text-xs text-teal-600 dark:text-teal-400 text-right"></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="text-xs text-gray-500 dark:text-gray-400">
+                            Latitude
+                            <input id="latitudeInput" type="number" step="0.000001" min="-90" max="90" class="mt-1 w-full p-3 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white" aria-label="Latitude">
+                        </label>
+                        <label class="text-xs text-gray-500 dark:text-gray-400">
+                            Longitude
+                            <input id="longitudeInput" type="number" step="0.000001" min="-180" max="180" class="mt-1 w-full p-3 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white" aria-label="Longitude">
+                        </label>
+                    </div>
+                    <label class="block mt-3 text-xs text-gray-500 dark:text-gray-400">
+                        IANA Timezone
+                        <input id="timezoneInput" type="text" placeholder="Asia/Kolkata" class="mt-1 w-full p-3 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white" aria-label="IANA timezone">
+                    </label>
+                    <div id="locationSettingsMessage" class="mt-2 text-xs" role="status" aria-live="polite"></div>
+                    <button id="saveLocationSettings" type="button" class="w-full mt-3 bg-teal-500 text-white py-3 rounded-lg hover:bg-teal-600 transition flex items-center justify-center gap-2">
+                        <i class="fas fa-save"></i>
+                        Save Prayer Location
+                    </button>
+                `;
+
+                const detectButton = Array.from(settingsSpace.querySelectorAll('button')).find(button => button.textContent.includes('Detect My Location'));
+                settingsSpace.insertBefore(section, detectButton || null);
+
+                const latitudeInput = document.getElementById('latitudeInput');
+                const longitudeInput = document.getElementById('longitudeInput');
+                const timezoneInput = document.getElementById('timezoneInput');
+                const message = document.getElementById('locationSettingsMessage');
+
+                latitudeInput.value = Number(userSettings.location?.lat ?? 21.4225).toFixed(6);
+                longitudeInput.value = Number(userSettings.location?.lng ?? 39.8262).toFixed(6);
+                timezoneInput.value = userSettings.timeZone || getBrowserTimeZone();
+                syncTimeZone();
+
+                document.getElementById('saveLocationSettings').addEventListener('click', () => {
+                    const lat = Number(latitudeInput.value);
+                    const lng = Number(longitudeInput.value);
+                    const timeZone = timezoneInput.value.trim();
+
+                    if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lng) || lng < -180 || lng > 180) {
+                        message.textContent = 'Enter a valid latitude and longitude.';
+                        message.className = 'mt-2 text-xs text-red-600 dark:text-red-400';
+                        return;
+                    }
+
+                    if (!isValidTimeZone(timeZone)) {
+                        message.textContent = 'Enter a valid IANA timezone, for example Asia/Kolkata.';
+                        message.className = 'mt-2 text-xs text-red-600 dark:text-red-400';
+                        return;
+                    }
+
+                    userSettings.location = { lat, lng };
+                    userSettings.timeZone = timeZone;
+                    userSettings.locationName = `${lat.toFixed(2)}, ${lng.toFixed(2)}`;
+                    saveSettings();
+                    updateLocationText(userSettings.locationName);
+                    calculateWithSelectedTimeZone();
+                    message.textContent = 'Prayer location saved.';
+                    message.className = 'mt-2 text-xs text-teal-600 dark:text-teal-400';
+                });
+            }
+
+            const originalDetectLocation = detectLocation;
+            window.detectLocation = function () {
+                if (!navigator.geolocation) {
+                    updateLocationText('Geolocation not supported');
+                    calculateWithSelectedTimeZone();
+                    return;
+                }
+
+                updateLocationText('Detecting location...');
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        userSettings.location = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        userSettings.locationName = '';
+                        userSettings.timeZone = getBrowserTimeZone();
+                        saveSettings();
+                        updateLocationName(userSettings.location.lat, userSettings.location.lng);
+                        calculateWithSelectedTimeZone();
+                        const latitudeInput = document.getElementById('latitudeInput');
+                        const longitudeInput = document.getElementById('longitudeInput');
+                        const timezoneInput = document.getElementById('timezoneInput');
+                        if (latitudeInput) latitudeInput.value = userSettings.location.lat.toFixed(6);
+                        if (longitudeInput) longitudeInput.value = userSettings.location.lng.toFixed(6);
+                        if (timezoneInput) timezoneInput.value = userSettings.timeZone;
+                    },
+                    error => {
+                        syncTimeZone();
+                        saveSettings();
+                        updateLocationText(userSettings.locationName || 'Saved location');
+                        calculateWithSelectedTimeZone();
+                    },
+                    { timeout: 10000, enableHighAccuracy: true, maximumAge: 300000 }
+                );
+            };
+
+            const originalCalculatePrayerTimes = calculatePrayerTimes;
+            window.calculatePrayerTimes = calculateWithSelectedTimeZone;
+
+            const originalLoadSettings = loadSettings;
+            window.loadSettings = function () {
+                originalLoadSettings();
+                if (!userSettings.timeZone || !isValidTimeZone(userSettings.timeZone)) {
+                    userSettings.timeZone = getBrowserTimeZone();
+                }
+            };
+
+            document.addEventListener('DOMContentLoaded', () => {
+                createLocationSettings();
+                syncTimeZone();
+            }, { once: true });
+        })();
+    </script>
 </body>
 </html>
