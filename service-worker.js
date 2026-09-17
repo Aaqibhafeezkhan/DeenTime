@@ -1,9 +1,11 @@
-const CACHE_NAME = 'azaan-pro-v1';
+const CACHE_NAME = 'azaan-pro-v2';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
     '/style.css',
     '/script.js',
+    '/script-core.js',
+    '/phase4.js',
     '/praytimes.js',
     '/manifest.json'
 ];
