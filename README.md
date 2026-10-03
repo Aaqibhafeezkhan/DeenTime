@@ -1,47 +1,96 @@
-# Azaan Pro - Islamic Prayer Times PWA
+# DeenTime
 
-A comprehensive Progressive Web App for Islamic prayer times with accurate calculations, Qibla direction, Hijri calendar, digital tasbih, and 99 Names of Allah.
+DeenTime is a lightweight, local-first Progressive Web App for prayer times and everyday Islamic worship utilities.
 
 ## Features
 
-- **Accurate Prayer Times**: Uses precise astronomical calculations with multiple methods (MWL, ISNA, Egypt, Makkah, Karachi, Tehran, Jafari)
-- **Next Prayer Countdown**: Real-time countdown to the next prayer with automatic updates
-- **Qibla Direction**: Visual compass showing Qibla direction from your location with device compass support
-- **Hijri Calendar**: Full Islamic calendar with Gregorian/Hijri date conversion
-- **Digital Tasbih**: Counter with customizable targets (33, 99, 100) and dhikr options
-- **99 Names of Allah**: Complete list with Arabic, English, and meanings
-- **Dark Mode**: Automatic or manual dark theme support
-- **Offline Support**: Works without internet after first load
-- **PWA Ready**: Install on mobile home screen for native app experience
-- **Location Detection**: Automatic location detection with manual override option
-- **Madhab Support**: Hanafi and Standard (Shafi, Maliki, Hanbali) calculation methods
+- Prayer times powered by the bundled PrayTimes.js calculation engine.
+- Multiple calculation methods with Standard and Hanafi Asr settings.
+- Explicit prayer location and IANA timezone controls.
+- Exact next-prayer selection and second-by-second countdown, including the post-Isha transition to the next day's Fajr.
+- Fixed Qibla direction with progressive device-compass support.
+- Gregorian/Hijri calendar presentation with timezone-aware date handling.
+- Digital Tasbih with persistent local state and selectable dhikr.
+- Searchable, accessible 99 Names of Allah content.
+- Installable PWA metadata with versioned offline caching.
+- No account requirement, analytics, or backend.
 
-## Installation
+## Privacy and local-first behavior
 
-1. Open the app in a modern browser (Chrome, Safari, Edge)
-2. Tap "Add to Home Screen" or "Install App" when prompted
-3. The app will work offline and receive prayer time notifications
+DeenTime stores settings, coordinates, timezone, calculation preferences, theme, and Tasbih state in browser local storage.
 
-## Usage
+Location permission is requested only after the user activates **Detect My Location**. Coordinates are not sent to a reverse-geocoding service. When a place name is not available, DeenTime displays the coordinates.
 
-- Allow location access for accurate prayer times for your area
-- Select your preferred calculation method and madhab in Settings
-- Enable notifications to receive alerts at prayer times
-- Use the bottom navigation to access Qibla, Tasbih, and More features
-- Tap the compass icon to see Qibla direction
-- Use the tasbih counter for dhikr with haptic feedback
+Notification permission is optional and handled only from the notification setting. It is not required for prayer calculations.
 
-## Browser Support
+## Architecture
 
-- Chrome/Edge (recommended)
-- Safari on iOS
-- Firefox
-- Samsung Internet
+~~~text
+index.html
+  |
+  +-- praytimes.js           deterministic prayer calculation engine
+  +-- names-of-allah.js      static Islamic content
+  +-- script-core.js         settings, storage, location, common UI
+  +-- phase4.js              next prayer and countdown
+  +-- phase5.js              Qibla device capabilities
+  +-- phase6.js              Hijri/calendar/time presentation
+  +-- phase7.js              Tasbih state and accessibility
+  +-- service-worker.js      PWA/offline lifecycle
+~~~
 
-## Technical Details
+The application remains framework-free. There is no backend and no GitHub Actions workflow.
 
-- Built with vanilla JavaScript (no framework dependencies)
-- Uses PrayTimes.js library for accurate prayer calculations
-- Tailwind CSS for responsive styling
-- Service Worker for offline functionality
-- LocalStorage for settings persistence
+## Local development
+
+Serve the repository over HTTP so service-worker and permission APIs work correctly:
+
+~~~text
+python -m http.server 8000
+~~~
+
+Then open the local application in a browser.
+
+## Testing
+
+Run the full deterministic suite:
+
+~~~text
+npm test
+~~~
+
+The tests avoid live geolocation, device sensors, external APIs, and browser notification services.
+
+## PWA and offline behavior
+
+The service worker precaches the application shell and local icon assets. Navigation uses network-first behavior with a cached application-shell fallback. Local static assets use cache-first behavior with network refresh. External optional resources use network-first behavior with a runtime-cache fallback.
+
+The service-worker cache is versioned using `CACHE_VERSION`. Updating the version during a release removes stale DeenTime caches and lets the application show a non-blocking update notice.
+
+## Manual deployment and release
+
+Deployment is intentionally manual. Publish the repository's static files to the target static host.
+
+For each release:
+
+1. Update `VERSION`.
+2. Update `CACHE_VERSION` in `service-worker.js` to the same version.
+3. Run `npm test`.
+4. Load the app once online, then verify core features with the network disabled.
+5. Tag the release using the same version, for example `v1.0.0`.
+
+No automatic deployment pipeline is required.
+
+## Icon tooling
+
+Run `python generate-icons.py` with Pillow installed to generate the declared PWA PNG icons. The HTML generators in `icons/` provide browser-based alternatives.
+
+## Browser capability notes
+
+- Geolocation is optional and requires explicit user action.
+- Device compass support is progressive and may require browser permission.
+- Browser notifications are optional.
+- The prayer-time engine is a client-side astronomical calculation model; local religious practice may use a different timetable or adjustment policy.
+
+## Release status
+
+The DeenTime roadmap is implemented through the completed Phase 1–12 issues tracked under Epic #3. Deployment and GTM are intentionally handled separately from repository implementation.

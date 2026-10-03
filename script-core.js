@@ -6,7 +6,9 @@ const userSettings = {
     timeFormat: '24h',
     theme: 'auto',
     tasbihTarget: 33,
-    currentDhikr: 'SubhanAllah'
+    currentDhikr: 'SubhanAllah',
+    locationName: 'Makkah, Saudi Arabia',
+    timeZone: 'Asia/Riyadh'
 };
 
 let prayerTimesCalc = new PrayTimes('MWL');
@@ -26,117 +28,17 @@ const prayerNames = {
     isha: { name: 'Isha', icon: 'fa-star', color: 'from-indigo-400 to-indigo-600' }
 };
 
-const namesOfAllah = [
-    { ar: 'الرحمن', en: 'Ar-Rahman', meaning: 'The Beneficent' },
-    { ar: 'الرحيم', en: 'Ar-Rahim', meaning: 'The Merciful' },
-    { ar: 'الملك', en: 'Al-Malik', meaning: 'The King' },
-    { ar: 'القدوس', en: 'Al-Quddus', meaning: 'The Holy' },
-    { ar: 'السلام', en: 'As-Salam', meaning: 'The Peace' },
-    { ar: 'المؤمن', en: 'Al-Mumin', meaning: 'The Guardian of Faith' },
-    { ar: 'المهيمن', en: 'Al-Muhaymin', meaning: 'The Protector' },
-    { ar: 'العزيز', en: 'Al-Aziz', meaning: 'The Mighty' },
-    { ar: 'الجبار', en: 'Al-Jabbar', meaning: 'The Compeller' },
-    { ar: 'المتكبر', en: 'Al-Mutakabbir', meaning: 'The Majestic' },
-    { ar: 'الخالق', en: 'Al-Khaliq', meaning: 'The Creator' },
-    { ar: 'البارئ', en: 'Al-Bari', meaning: 'The Evolver' },
-    { ar: 'المصور', en: 'Al-Musawwir', meaning: 'The Fashioner' },
-    { ar: 'الغفار', en: 'Al-Ghaffar', meaning: 'The Forgiver' },
-    { ar: 'القهار', en: 'Al-Qahhar', meaning: 'The Subduer' },
-    { ar: 'الوهاب', en: 'Al-Wahhab', meaning: 'The Bestower' },
-    { ar: 'الرزاق', en: 'Ar-Razzaq', meaning: 'The Provider' },
-    { ar: 'الفتاح', en: 'Al-Fattah', meaning: 'The Opener' },
-    { ar: 'العليم', en: 'Al-Alim', meaning: 'The All-Knowing' },
-    { ar: 'القابض', en: 'Al-Qabid', meaning: 'The Constrictor' },
-    { ar: 'الباسط', en: 'Al-Basit', meaning: 'The Expander' },
-    { ar: 'الخافض', en: 'Al-Khafid', meaning: 'The Abaser' },
-    { ar: 'الرافع', en: 'Ar-Rafi', meaning: 'The Exalter' },
-    { ar: 'المعز', en: 'Al-Muizz', meaning: 'The Honorer' },
-    { ar: 'المذل', en: 'Al-Mudhill', meaning: 'The Humiliator' },
-    { ar: 'السميع', en: 'As-Sami', meaning: 'The All-Hearing' },
-    { ar: 'البصير', en: 'Al-Basir', meaning: 'The All-Seeing' },
-    { ar: 'الحكم', en: 'Al-Hakam', meaning: 'The Judge' },
-    { ar: 'العدل', en: 'Al-Adl', meaning: 'The Just' },
-    { ar: 'اللطيف', en: 'Al-Latif', meaning: 'The Gentle' },
-    { ar: 'الخبير', en: 'Al-Khabir', meaning: 'The Aware' },
-    { ar: 'الحليم', en: 'Al-Halim', meaning: 'The Forbearing' },
-    { ar: 'العظيم', en: 'Al-Azim', meaning: 'The Magnificent' },
-    { ar: 'الغفور', en: 'Al-Ghafur', meaning: 'The Forgiver' },
-    { ar: 'الشكور', en: 'Ash-Shakur', meaning: 'The Appreciative' },
-    { ar: 'العلي', en: 'Al-Ali', meaning: 'The Most High' },
-    { ar: 'الكبير', en: 'Al-Kabir', meaning: 'The Great' },
-    { ar: 'الحفيظ', en: 'Al-Hafiz', meaning: 'The Preserver' },
-    { ar: 'المقيت', en: 'Al-Muqit', meaning: 'The Nourisher' },
-    { ar: 'الحسيب', en: 'Al-Hasib', meaning: 'The Reckoner' },
-    { ar: 'الجليل', en: 'Al-Jalil', meaning: 'The Sublime' },
-    { ar: 'الكريم', en: 'Al-Karim', meaning: 'The Generous' },
-    { ar: 'الرقيب', en: 'Ar-Raqib', meaning: 'The Watchful' },
-    { ar: 'المجيب', en: 'Al-Mujib', meaning: 'The Responsive' },
-    { ar: 'الواسع', en: 'Al-Wasi', meaning: 'The All-Embracing' },
-    { ar: 'الحكيم', en: 'Al-Hakim', meaning: 'The Wise' },
-    { ar: 'الودود', en: 'Al-Wadud', meaning: 'The Loving' },
-    { ar: 'المجيد', en: 'Al-Majid', meaning: 'The Glorious' },
-    { ar: 'الباعث', en: 'Al-Baith', meaning: 'The Resurrector' },
-    { ar: 'الشهيد', en: 'Ash-Shahid', meaning: 'The Witness' },
-    { ar: 'الحق', en: 'Al-Haqq', meaning: 'The Truth' },
-    { ar: 'الوكيل', en: 'Al-Wakil', meaning: 'The Trustee' },
-    { ar: 'القوي', en: 'Al-Qawiyy', meaning: 'The Strong' },
-    { ar: 'المتين', en: 'Al-Matin', meaning: 'The Firm' },
-    { ar: 'الولي', en: 'Al-Waliyy', meaning: 'The Protecting Friend' },
-    { ar: 'الحميد', en: 'Al-Hamid', meaning: 'The Praiseworthy' },
-    { ar: 'المحصي', en: 'Al-Muhsi', meaning: 'The Counter' },
-    { ar: 'المبدئ', en: 'Al-Mubdi', meaning: 'The Originator' },
-    { ar: 'المعيد', en: 'Al-Muid', meaning: 'The Restorer' },
-    { ar: 'المحيي', en: 'Al-Muhyi', meaning: 'The Giver of Life' },
-    { ar: 'المميت', en: 'Al-Mumit', meaning: 'The Creator of Death' },
-    { ar: 'الحي', en: 'Al-Hayy', meaning: 'The Alive' },
-    { ar: 'القيوم', en: 'Al-Qayyum', meaning: 'The Self-Subsisting' },
-    { ar: 'الواجد', en: 'Al-Wajid', meaning: 'The Finder' },
-    { ar: 'الماجد', en: 'Al-Majid', meaning: 'The Noble' },
-    { ar: 'الواحد', en: 'Al-Wahid', meaning: 'The One' },
-    { ar: 'الأحد', en: 'Al-Ahad', meaning: 'The Unique' },
-    { ar: 'الصمد', en: 'As-Samad', meaning: 'The Eternal' },
-    { ar: 'القادر', en: 'Al-Qadir', meaning: 'The Able' },
-    { ar: 'المقتدر', en: 'Al-Muqtadir', meaning: 'The Powerful' },
-    { ar: 'المقدم', en: 'Al-Muqaddim', meaning: 'The Expediter' },
-    { ar: 'المؤخر', en: 'Al-Muakhkhir', meaning: 'The Delayer' },
-    { ar: 'الأول', en: 'Al-Awwal', meaning: 'The First' },
-    { ar: 'الآخر', en: 'Al-Akhir', meaning: 'The Last' },
-    { ar: 'الظاهر', en: 'Az-Zahir', meaning: 'The Manifest' },
-    { ar: 'الباطن', en: 'Al-Batin', meaning: 'The Hidden' },
-    { ar: 'الوالي', en: 'Al-Wali', meaning: 'The Governor' },
-    { ar: 'المتعالي', en: 'Al-Mutaali', meaning: 'The Most Exalted' },
-    { ar: 'البر', en: 'Al-Barr', meaning: 'The Source of Goodness' },
-    { ar: 'التواب', en: 'At-Tawwab', meaning: 'The Acceptor of Repentance' },
-    { ar: 'المنتقم', en: 'Al-Muntaqim', meaning: 'The Avenger' },
-    { ar: 'العفو', en: 'Al-Afuww', meaning: 'The Pardoner' },
-    { ar: 'الرؤوف', en: 'Ar-Rauf', meaning: 'The Compassionate' },
-    { ar: 'مالك الملك', en: 'Malik-ul-Mulk', meaning: 'The Owner of All' },
-    { ar: 'ذو الجلال والإكرام', en: 'Dhu-l-Jalal wa-l-Ikram', meaning: 'The Lord of Majesty and Bounty' },
-    { ar: 'المقسط', en: 'Al-Muqsit', meaning: 'The Equitable' },
-    { ar: 'الجامع', en: 'Al-Jami', meaning: 'The Gatherer' },
-    { ar: 'الغني', en: 'Al-Ghani', meaning: 'The Self-Sufficient' },
-    { ar: 'المغني', en: 'Al-Mughni', meaning: 'The Enricher' },
-    { ar: 'المانع', en: 'Al-Mani', meaning: 'The Preventer' },
-    { ar: 'الضار', en: 'Ad-Darr', meaning: 'The Distresser' },
-    { ar: 'النافع', en: 'An-Nafi', meaning: 'The Propitious' },
-    { ar: 'النور', en: 'An-Nur', meaning: 'The Light' },
-    { ar: 'الهادي', en: 'Al-Hadi', meaning: 'The Guide' },
-    { ar: 'البديع', en: 'Al-Badi', meaning: 'The Incomparable' },
-    { ar: 'الباقي', en: 'Al-Baqi', meaning: 'The Everlasting' },
-    { ar: 'الوارث', en: 'Al-Warith', meaning: 'The Inheritor' },
-    { ar: 'الرشيد', en: 'Ar-Rashid', meaning: 'The Guide to the Right Path' },
-    { ar: 'الصبور', en: 'As-Sabur', meaning: 'The Patient' }
-];
-
 function initApp() {
     loadSettings();
     initServiceWorker();
     setupEventListeners();
     initTheme();
     updateCurrentTime();
-    setInterval(updateCurrentTime, 1000);
-    detectLocation();
+    window.setInterval(updateCurrentTime, 1000);
+    window.setInterval(checkNotificationPermissionState, 5000);
     renderNamesOfAllah();
+    updateLocationDisplay();
+    calculatePrayerTimes();
 }
 
 function initTheme() {
@@ -189,52 +91,112 @@ function gregorianToHijri(date) {
 
 function detectLocation() {
     if (!navigator.geolocation) {
-        updateLocationText('Geolocation not supported');
+        updateLocationText('Geolocation is not supported by this browser.');
         return;
     }
-    
+
+    updateLocationText('Detecting location...');
     navigator.geolocation.getCurrentPosition(
         position => {
             userSettings.location = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
+                lat: Number(position.coords.latitude.toFixed(6)),
+                lng: Number(position.coords.longitude.toFixed(6))
             };
+            userSettings.locationName = formatCoordinates(userSettings.location);
             saveSettings();
-            getLocationName(userSettings.location.lat, userSettings.location.lng);
+            updateLocationDisplay();
             calculatePrayerTimes();
         },
-        error => {
-            updateLocationText('Location access denied');
+        () => {
+            updateLocationDisplay();
             calculatePrayerTimes();
         },
-        { timeout: 10000, enableHighAccuracy: true }
+        { timeout: 10000, enableHighAccuracy: false, maximumAge: 300000 }
     );
 }
 
-function getLocationName(lat, lng) {
-    fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`)
-        .then(res => res.json())
-        .then(data => {
-            const location = data.city || data.locality || data.principalSubdivision || 'Unknown Location';
-            updateLocationText(location);
-        })
-        .catch(() => updateLocationText(`${lat.toFixed(2)}, ${lng.toFixed(2)}`));
+function formatCoordinates(location) {
+    if (!location || !Number.isFinite(location.lat) || !Number.isFinite(location.lng)) {
+        return 'Location unavailable';
+    }
+    return `Lat ${location.lat.toFixed(4)}, Lng ${location.lng.toFixed(4)}`;
+}
+
+function updateLocationDisplay() {
+    updateLocationText(userSettings.locationName || formatCoordinates(userSettings.location));
 }
 
 function updateLocationText(text) {
     document.getElementById('locationText').textContent = text;
 }
 
-function calculatePrayerTimes() {
-    const date = new Date();
-    const times = prayerTimesCalc.getTimes(
-        [date.getFullYear(), date.getMonth() + 1, date.getDate()],
+function getBrowserTimeZone() {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+}
+
+function getTimeZoneOffsetHours(timeZone, date) {
+    try {
+        const parts = new Intl.DateTimeFormat('en-US', { timeZone, timeZoneName: 'longOffset' }).formatToParts(date);
+        const value = parts.find(part => part.type === 'timeZoneName')?.value || 'GMT';
+        const match = value.match(/GMT([+-])(\d{2})(?::(\d{2}))?/);
+        if (!match) return 0;
+        const sign = match[1] === '+' ? 1 : -1;
+        return sign * (Number(match[2]) + Number(match[3] || 0) / 60);
+    } catch (error) {
+        return 0;
+    }
+}
+
+function isValidTimeZone(timeZone) {
+    if (typeof timeZone !== 'string' || !timeZone.trim()) return false;
+    try {
+        new Intl.DateTimeFormat('en-US', { timeZone }).format();
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+function getTimeZoneDateParts(date, timeZone = userSettings.timeZone || getBrowserTimeZone()) {
+    const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    }).formatToParts(date);
+    const values = Object.fromEntries(parts.map(part => [part.type, part.value]));
+    return { year: Number(values.year), month: Number(values.month), day: Number(values.day) };
+}
+
+function zonedTimeToDate(year, month, day, hour, minute, timeZone) {
+    const utcGuess = Date.UTC(year, month - 1, day, hour, minute, 0, 0);
+    const firstOffset = getTimeZoneOffsetHours(timeZone, new Date(utcGuess));
+    const firstResult = new Date(utcGuess - firstOffset * 60 * 60 * 1000);
+    const actualOffset = getTimeZoneOffsetHours(timeZone, firstResult);
+    return actualOffset === firstOffset ? firstResult : new Date(utcGuess - actualOffset * 60 * 60 * 1000);
+}
+
+function addDaysInTimeZone(date, days, timeZone = userSettings.timeZone || getBrowserTimeZone()) {
+    const parts = getTimeZoneDateParts(date, timeZone);
+    const shifted = new Date(Date.UTC(parts.year, parts.month - 1, parts.day + days, 12, 0, 0));
+    return zonedTimeToDate(shifted.getUTCFullYear(), shifted.getUTCMonth() + 1, shifted.getUTCDate(), 12, 0, timeZone);
+}
+
+function getPrayerTimesForDate(date) {
+    const timeZone = userSettings.timeZone || getBrowserTimeZone();
+    const parts = getTimeZoneDateParts(date, timeZone);
+    const timezoneOffset = getTimeZoneOffsetHours(timeZone, date);
+    return prayerTimesCalc.getTimes(
+        [parts.year, parts.month, parts.day],
         [userSettings.location.lat, userSettings.location.lng],
-        date.getTimezoneOffset() / -60,
+        timezoneOffset,
         0,
         userSettings.timeFormat
     );
-    
+}
+
+function calculatePrayerTimes() {
+    const times = getPrayerTimesForDate(new Date());
     currentPrayerTimes = {
         fajr: times.fajr,
         sunrise: times.sunrise,
@@ -243,11 +205,12 @@ function calculatePrayerTimes() {
         maghrib: times.maghrib,
         isha: times.isha
     };
-    
     renderPrayerTimes();
     updateNextPrayer();
     calculateQibla();
-    document.getElementById('loading').style.display = 'none';
+    updateLocationDisplay();
+    const loading = document.getElementById('loading');
+    if (loading) loading.style.display = 'none';
 }
 
 function renderPrayerTimes() {
@@ -505,80 +468,267 @@ function setDhikr(dhikr) {
 
 function renderNamesOfAllah() {
     const container = document.getElementById('namesList');
+    if (!container || !Array.isArray(namesOfAllah)) return;
+    const query = (document.getElementById('namesSearch')?.value || '').trim().toLocaleLowerCase();
+    const filtered = namesOfAllah.filter(name =>
+        name.en.toLocaleLowerCase().includes(query) ||
+        name.meaning.toLocaleLowerCase().includes(query) ||
+        name.ar.includes(query)
+    );
+
     container.innerHTML = '';
-    
-    namesOfAllah.forEach((name, index) => {
-        const card = document.createElement('div');
-        card.className = 'bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-gray-700 dark:to-gray-800 rounded-lg p-3 text-center cursor-pointer hover:shadow-md transition';
-        card.innerHTML = `
-            <p class="text-lg font-bold text-teal-700 dark:text-teal-300">${name.ar}</p>
-            <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">${name.en}</p>
-            <p class="text-xs text-gray-500 dark:text-gray-500">${name.meaning}</p>
-        `;
-        card.onclick = () => {
-            alert(`${name.ar}\
-${name.en}\
-${name.meaning}`);
-        };
-        container.appendChild(card);
+    filtered.forEach(name => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'name-card text-left bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-gray-700 dark:to-gray-800 rounded-lg p-3 hover:shadow-md transition focus-visible:ring-2 focus-visible:ring-teal-500';
+        button.setAttribute('aria-label', `Name ${name.number}: ${name.en}, ${name.meaning}`);
+
+        const number = document.createElement('span');
+        number.className = 'text-xs font-semibold text-teal-600 dark:text-teal-400';
+        number.textContent = String(name.number).padStart(2, '0');
+
+        const arabic = document.createElement('p');
+        arabic.className = 'text-lg font-bold text-teal-700 dark:text-teal-300 mt-1';
+        arabic.dir = 'rtl';
+        arabic.lang = 'ar';
+        arabic.textContent = name.ar;
+
+        const english = document.createElement('p');
+        english.className = 'text-xs font-semibold text-gray-700 dark:text-gray-200 mt-1';
+        english.textContent = name.en;
+
+        const meaning = document.createElement('p');
+        meaning.className = 'text-xs text-gray-500 dark:text-gray-400 mt-1';
+        meaning.textContent = name.meaning;
+
+        button.append(number, arabic, english, meaning);
+        button.addEventListener('click', () => openNameDetails(name));
+        container.appendChild(button);
     });
+
+    const resultCount = document.getElementById('namesResultCount');
+    if (resultCount) resultCount.textContent = query ? `${filtered.length} of ${namesOfAllah.length} names shown` : `${namesOfAllah.length} names`;
+}
+
+function openNameDetails(name) {
+    const dialog = document.getElementById('nameDetailDialog');
+    if (!dialog) return;
+    document.getElementById('nameDetailNumber').textContent = `Name ${name.number}`;
+    document.getElementById('nameDetailArabic').textContent = name.ar;
+    document.getElementById('nameDetailEnglish').textContent = name.en;
+    document.getElementById('nameDetailMeaning').textContent = name.meaning;
+    if (typeof dialog.showModal === 'function') dialog.showModal();
+    else dialog.removeAttribute('hidden');
+}
+
+function closeNameDetails() {
+    const dialog = document.getElementById('nameDetailDialog');
+    if (!dialog) return;
+    if (typeof dialog.close === 'function') dialog.close();
+    else dialog.setAttribute('hidden', '');
 }
 
 function setupEventListeners() {
-    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-    document.getElementById('enableCompass').addEventListener('click', enableDeviceCompass);
-    document.getElementById('calcMethod').addEventListener('change', (e) => {
-        userSettings.calcMethod = e.target.value;
-        prayerTimesCalc.setMethod(e.target.value);
+    document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
+    document.getElementById('enableCompass')?.addEventListener('click', enableDeviceCompass);
+
+    document.getElementById('calcMethod')?.addEventListener('change', event => {
+        if (!CALCULATION_METHODS.includes(event.target.value)) return;
+        userSettings.calcMethod = event.target.value;
+        prayerTimesCalc.setMethod(event.target.value);
         saveSettings();
         calculatePrayerTimes();
     });
-    document.getElementById('madhab').addEventListener('change', (e) => {
-        userSettings.madhab = e.target.value;
-        prayerTimesCalc.adjust({ asrMethod: e.target.value === 'Hanafi' ? 2 : 1 });
+
+    document.getElementById('madhab')?.addEventListener('change', event => {
+        if (!MADHABS.includes(event.target.value)) return;
+        userSettings.madhab = event.target.value;
+        prayerTimesCalc.adjust({ asrMethod: event.target.value === 'Hanafi' ? 2 : 1 });
         saveSettings();
         calculatePrayerTimes();
     });
-    document.getElementById('timeFormat').addEventListener('change', (e) => {
-        userSettings.timeFormat = e.target.checked ? '24h' : '12h';
+
+    document.getElementById('timeFormat')?.addEventListener('change', event => {
+        userSettings.timeFormat = event.target.checked ? '24h' : '12h';
         saveSettings();
         calculatePrayerTimes();
         updateCurrentTime();
     });
-    document.getElementById('notifications').addEventListener('change', (e) => {
-        userSettings.notifications = e.target.checked;
-        saveSettings();
-        if (e.target.checked && 'Notification' in window) {
-            Notification.requestPermission();
+
+    document.getElementById('notifications')?.addEventListener('change', async event => {
+        if (!event.target.checked) {
+            userSettings.notifications = false;
+            saveSettings();
+            updateNotificationStatus();
+            return;
         }
+
+        if (!('Notification' in window)) {
+            event.target.checked = false;
+            userSettings.notifications = false;
+            updateNotificationStatus('Browser notifications are not supported.');
+            return;
+        }
+
+        const permission = Notification.permission === 'default'
+            ? await Notification.requestPermission()
+            : Notification.permission;
+        userSettings.notifications = permission === 'granted';
+        event.target.checked = userSettings.notifications;
+        saveSettings();
+        updateNotificationStatus(userSettings.notifications ? 'Browser notification permission is enabled.' : 'Browser notification permission was not granted.');
     });
+
+    document.getElementById('detectLocationButton')?.addEventListener('click', detectLocation);
+    document.getElementById('saveLocationSettings')?.addEventListener('click', saveLocationSettings);
+    document.getElementById('resetSettings')?.addEventListener('click', resetSettings);
+    document.getElementById('namesSearch')?.addEventListener('input', renderNamesOfAllah);
+    document.getElementById('closeNameDialog')?.addEventListener('click', closeNameDetails);
+    document.querySelectorAll('[data-tab]').forEach(button => button.addEventListener('click', () => showTab(button.dataset.tab)));
+
+    syncSettingsControls();
+    updateNotificationStatus();
+}
+
+function syncSettingsControls() {
+    const calcMethod = document.getElementById('calcMethod');
+    const madhab = document.getElementById('madhab');
+    const timeFormat = document.getElementById('timeFormat');
+    const notifications = document.getElementById('notifications');
+    if (calcMethod) calcMethod.value = userSettings.calcMethod;
+    if (madhab) madhab.value = userSettings.madhab;
+    if (timeFormat) timeFormat.checked = userSettings.timeFormat === '24h';
+    if (notifications) notifications.checked = userSettings.notifications;
+
+    const latitudeInput = document.getElementById('latitudeInput');
+    const longitudeInput = document.getElementById('longitudeInput');
+    const timezoneInput = document.getElementById('timezoneInput');
+    if (latitudeInput) latitudeInput.value = userSettings.location.lat.toFixed(6);
+    if (longitudeInput) longitudeInput.value = userSettings.location.lng.toFixed(6);
+    if (timezoneInput) timezoneInput.value = userSettings.timeZone;
+}
+
+function saveLocationSettings() {
+    const latitude = Number(document.getElementById('latitudeInput')?.value);
+    const longitude = Number(document.getElementById('longitudeInput')?.value);
+    const timeZone = document.getElementById('timezoneInput')?.value.trim();
+
+    if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90 || !Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
+        setSettingsMessage('Enter a valid latitude and longitude.', true);
+        return;
+    }
+
+    if (!isValidTimeZone(timeZone)) {
+        setSettingsMessage('Enter a valid IANA timezone, for example Asia/Kolkata.', true);
+        return;
+    }
+
+    userSettings.location = { lat: Number(latitude.toFixed(6)), lng: Number(longitude.toFixed(6)) };
+    userSettings.locationName = formatCoordinates(userSettings.location);
+    userSettings.timeZone = timeZone;
+    saveSettings();
+    syncSettingsControls();
+    updateLocationDisplay();
+    calculatePrayerTimes();
+    setSettingsMessage('Prayer location saved.');
+}
+
+function setSettingsMessage(message, error = false) {
+    const element = document.getElementById('locationSettingsMessage');
+    if (!element) return;
+    element.textContent = message;
+    element.className = error ? 'mt-2 text-xs text-red-600 dark:text-red-400' : 'mt-2 text-xs text-teal-600 dark:text-teal-400';
+}
+
+function resetSettings() {
+    if (!window.confirm('Reset DeenTime settings stored on this device?')) return;
+    safeStorageRemove(SETTINGS_STORAGE_KEY);
+    safeStorageRemove(LEGACY_SETTINGS_STORAGE_KEY);
+    Object.assign(userSettings, getDefaultSettings());
+    tasbihCount = 0;
+    safeStorageRemove('deenTimeTasbihState');
+    saveSettings();
+    syncSettingsControls();
+    initTheme();
+    updateLocationDisplay();
+    renderNamesOfAllah();
+    calculatePrayerTimes();
+    setSettingsMessage('Local DeenTime settings were reset.');
 }
 
 function initServiceWorker() {
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/service-worker.js')
-            .then(reg => console.log('SW registered'))
-            .catch(err => console.log('SW error:', err));
-    }
+    if (!('serviceWorker' in navigator)) return;
+    navigator.serviceWorker.addEventListener('message', event => {
+        if (event.data?.type === 'DEENTIME_SW_UPDATED') document.getElementById('updateNotice')?.classList.remove('hidden');
+    });
+    navigator.serviceWorker.register('./service-worker.js').then(registration => registration.update()).catch(() => {});
+}
+
+const SETTINGS_STORAGE_KEY = 'deenTimeSettings';
+const LEGACY_SETTINGS_STORAGE_KEY = 'azaanSettings';
+const CALCULATION_METHODS = ['MWL', 'ISNA', 'Egypt', 'Makkah', 'Karachi', 'Tehran', 'Jafari'];
+const MADHABS = ['Standard', 'Hanafi'];
+const TIME_FORMATS = ['12h', '24h'];
+const THEMES = ['auto', 'light', 'dark'];
+
+function getDefaultSettings() {
+    return { location: { lat: 21.4225, lng: 39.8262 }, calcMethod: 'MWL', madhab: 'Standard', notifications: false, timeFormat: '24h', theme: 'auto', tasbihTarget: 33, currentDhikr: 'SubhanAllah', locationName: 'Makkah, Saudi Arabia', timeZone: 'Asia/Riyadh' };
+}
+
+function safeStorageGet(key) { try { return window.localStorage.getItem(key); } catch (error) { return null; } }
+function safeStorageSet(key, value) { try { window.localStorage.setItem(key, value); return true; } catch (error) { return false; } }
+function safeStorageRemove(key) { try { window.localStorage.removeItem(key); } catch (error) {} }
+
+function normalizeSettings(saved) {
+    const defaults = getDefaultSettings();
+    const source = saved && typeof saved === 'object' ? saved : {};
+    const location = source.location && typeof source.location === 'object' ? source.location : {};
+    const lat = Number(location.lat);
+    const lng = Number(location.lng);
+    return {
+        location: { lat: Number.isFinite(lat) && lat >= -90 && lat <= 90 ? lat : defaults.location.lat, lng: Number.isFinite(lng) && lng >= -180 && lng <= 180 ? lng : defaults.location.lng },
+        calcMethod: CALCULATION_METHODS.includes(source.calcMethod) ? source.calcMethod : defaults.calcMethod,
+        madhab: MADHABS.includes(source.madhab) ? source.madhab : defaults.madhab,
+        notifications: source.notifications === true,
+        timeFormat: TIME_FORMATS.includes(source.timeFormat) ? source.timeFormat : defaults.timeFormat,
+        theme: THEMES.includes(source.theme) ? source.theme : defaults.theme,
+        tasbihTarget: [33, 99, 100].includes(Number(source.tasbihTarget)) ? Number(source.tasbihTarget) : defaults.tasbihTarget,
+        currentDhikr: typeof source.currentDhikr === 'string' && source.currentDhikr.trim() ? source.currentDhikr : defaults.currentDhikr,
+        locationName: typeof source.locationName === 'string' && source.locationName.trim() ? source.locationName : defaults.locationName,
+        timeZone: isValidTimeZone(source.timeZone) ? source.timeZone : defaults.timeZone
+    };
 }
 
 function saveSettings() {
-    localStorage.setItem('azaanSettings', JSON.stringify(userSettings));
+    safeStorageSet(SETTINGS_STORAGE_KEY, JSON.stringify(userSettings));
 }
 
 function loadSettings() {
-    const saved = localStorage.getItem('azaanSettings');
-    if (saved) {
-        Object.assign(userSettings, JSON.parse(saved));
-    }
-    
-    document.getElementById('calcMethod').value = userSettings.calcMethod;
-    document.getElementById('madhab').value = userSettings.madhab;
-    document.getElementById('timeFormat').checked = userSettings.timeFormat === '24h';
-    document.getElementById('notifications').checked = userSettings.notifications;
-    
+    const raw = safeStorageGet(SETTINGS_STORAGE_KEY) || safeStorageGet(LEGACY_SETTINGS_STORAGE_KEY);
+    let saved = null;
+    try { saved = raw ? JSON.parse(raw) : null; } catch (error) { saved = null; }
+    Object.assign(userSettings, normalizeSettings(saved));
     prayerTimesCalc.setMethod(userSettings.calcMethod);
     prayerTimesCalc.adjust({ asrMethod: userSettings.madhab === 'Hanafi' ? 2 : 1 });
+}
+
+function updateNotificationStatus(message) {
+    const status = document.getElementById('notificationStatus');
+    if (!status) return;
+    if (message) { status.textContent = message; return; }
+    if (!('Notification' in window)) { status.textContent = 'Not supported by this browser.'; return; }
+    status.textContent = Notification.permission === 'granted' ? 'Browser permission enabled.' : 'No browser permission granted.';
+}
+
+function checkNotificationPermissionState() {
+    if (!userSettings.notifications || !('Notification' in window)) return;
+    if (Notification.permission !== 'granted') {
+        userSettings.notifications = false;
+        const toggle = document.getElementById('notifications');
+        if (toggle) toggle.checked = false;
+        saveSettings();
+        updateNotificationStatus();
+    }
 }
 
 document.addEventListener('DOMContentLoaded', initApp);

@@ -1,29 +1,57 @@
-# Prayer-time engine validation
+# DeenTime testing
 
-The prayer-time engine is deterministic for a supplied date, coordinate pair, timezone, calculation method, Asr shadow factor, and output format.
+## Automated validation
 
-## Regression coverage
+Run:
 
-Run the phase 2 regression suite from the repository root:
+~~~text
+npm test
+~~~
 
-```text
+This executes:
+
+~~~text
 node tests/praytimes.test.js
-```
+node tests/phase6.test.js
+node tests/phase7.test.js
+node tests/phase8.test.js
+node tests/phase9.test.js
+node tests/phase10.test.js
+node tests/phase11.test.js
+~~~
 
-The suite verifies:
+The checks are deterministic and do not depend on live geolocation, device sensors, external APIs, or notification services.
 
-- finite prayer-time values for representative Mumbai coordinates
-- Standard and Hanafi Asr calculations produce distinct results
-- Hanafi Asr occurs later than Standard Asr for the representative inputs
-- 12-hour formatting remains `HH:MM AM/PM`
-- all currently supported calculation methods produce finite daily values
+## Manual smoke test
 
-## Engine assumptions
+Serve the repository:
 
-- Coordinates are supplied as latitude/longitude in decimal degrees.
-- Timezone is supplied as an hours offset from UTC by the caller.
-- The existing astronomical calculation model remains intentionally lightweight and client-side.
-- Calculation methods are configuration presets; local religious practice may use a different authoritative timetable or adjustment policy.
-- The engine does not claim scholarly certification or replace local mosque or institutional prayer-time guidance.
+~~~text
+python -m http.server 8000
+~~~
 
-Phase 3 will make location, timezone, and user calculation settings explicit at the application boundary and connect the selected madhab to the engine's Asr factor.
+Verify:
+
+- prayer times render from the saved/default location and selected timezone
+- calculation method, madhab, time format, and theme persist after reload
+- next prayer and countdown update correctly through prayer transitions
+- fixed Qibla direction works when orientation is unavailable
+- location permission is requested only from the explicit location action
+- manual coordinates and IANA timezone validate and persist
+- Hijri and Gregorian dates remain aligned around month/year boundaries
+- Tasbih state persists and reset clears local state
+- Names search and name detail interaction work with keyboard input
+- browser zoom remains available
+- service-worker shell fallback works after a successful online load
+- core app works after the network is disabled
+- notification permission remains optional
+
+## Release verification
+
+1. Run `npm test`.
+2. Inspect `manifest.json` and all referenced icons.
+3. Open DeenTime in a clean browser session.
+4. Load once online, then disable the network and reload.
+5. Confirm the prayer-time and worship-tool core experience remains available.
+6. Confirm no GitHub Actions workflow exists.
+7. Confirm `VERSION` and `CACHE_VERSION` match.

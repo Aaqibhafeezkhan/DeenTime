@@ -4,21 +4,14 @@ let phase4NextPrayerKey = null;
 let phase4NextPrayerAt = null;
 
 function phase4PrayerTimesForDate(date) {
-    return prayerTimesCalc.getTimes(
-        [date.getFullYear(), date.getMonth() + 1, date.getDate()],
-        [userSettings.location.lat, userSettings.location.lng],
-        date.getTimezoneOffset() / -60,
-        0,
-        userSettings.timeFormat
-    );
+    return getPrayerTimesForDate(date);
 }
 
 function phase4PrayerDate(key, date) {
     const times = phase4PrayerTimesForDate(date);
     const [hours, minutes] = parseTime(times[key]);
-    const result = new Date(date);
-    result.setHours(hours, minutes, 0, 0);
-    return result;
+    const parts = getTimeZoneDateParts(date);
+    return zonedTimeToDate(parts.year, parts.month, parts.day, hours, minutes, userSettings.timeZone);
 }
 
 function phase4FindNextPrayer(now) {
@@ -31,8 +24,7 @@ function phase4FindNextPrayer(now) {
         }
     }
 
-    const tomorrow = new Date(now);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrow = addDaysInTimeZone(now, 1);
     const tomorrowTimes = phase4PrayerTimesForDate(tomorrow);
     return {
         key: 'fajr',
