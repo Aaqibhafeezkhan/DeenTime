@@ -19,11 +19,7 @@ const gregorianMonthNames = [
 ];
 
 function getGregorianDateParts(date) {
-    return {
-        year: date.getFullYear(),
-        month: date.getMonth() + 1,
-        day: date.getDate()
-    };
+    return getTimeZoneDateParts(date);
 }
 
 function gregorianDateToJulianDay(year, month, day) {
@@ -83,92 +79,66 @@ function formatHijriDate(hijri) {
 }
 
 function formatGregorianDate(date) {
-    return date.toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
+    return new Intl.DateTimeFormat('en-US', { timeZone: userSettings.timeZone, weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).format(date);
 }
 
 function updateCurrentTime() {
     const now = new Date();
-    const timeStr = userSettings.timeFormat === '24h'
-        ? now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })
-        : now.toLocaleTimeString('en-US', { hour12: true, hour: 'numeric', minute: '2-digit' });
-
+    const timeStr = new Intl.DateTimeFormat('en-US', {
+        timeZone: userSettings.timeZone,
+        hour12: userSettings.timeFormat !== '24h',
+        hour: '2-digit',
+        minute: '2-digit'
+    }).format(now);
     const currentTime = document.getElementById('currentTime');
     const currentDate = document.getElementById('currentDate');
     const hijriDate = document.getElementById('hijriDate');
-
+    const formattedHijri = formatHijriDate(gregorianToHijri(now));
     if (currentTime) currentTime.textContent = timeStr;
-
-    if (currentDate) {
-        currentDate.textContent = formatGregorianDate(now);
-    }
-
+    if (currentDate) currentDate.textContent = formatGregorianDate(now);
     if (hijriDate) {
-        hijriDate.textContent = formatHijriDate(gregorianToHijri(now));
-        hijriDate.setAttribute('aria-label', `Hijri date: ${formatHijriDate(gregorianToHijri(now))}`);
+        hijriDate.textContent = formattedHijri;
+        hijriDate.setAttribute('aria-label', `Hijri date: ${formattedHijri}`);
     }
 }
 
 function renderCalendar() {
-    const date = new Date();
-    date.setDate(1);
-    date.setMonth(date.getMonth() + calendarOffset);
-
-    const month = date.getMonth();
-    const year = date.getFullYear();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const startingDay = firstDay.getDay();
+    const now = new Date();
+    const nowParts = getTimeZoneDateParts(now);
+    const anchor = new Date(Date.UTC(nowParts.year, nowParts.month - 1, 1, 12, 0, 0));
+    anchor.setUTCMonth(anchor.getUTCMonth() + calendarOffset);
+    const month = anchor.getUTCMonth();
+    const year = anchor.getUTCFullYear();
+    const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+    const startingDay = new Date(Date.UTC(year, month, 1)).getUTCDay();
+    const firstDay = zonedTimeToDate(year, month + 1, 1, 12, 0, userSettings.timeZone);
+    const lastDay = zonedTimeToDate(year, month + 1, daysInMonth, 12, 0, userSettings.timeZone);
     const firstHijri = gregorianToHijri(firstDay);
     const lastHijri = gregorianToHijri(lastDay);
-
-    document.getElementById('calendarMonth').textContent =
-        `${gregorianMonthNames[month]} ${year} · ${firstHijri.monthName} ${firstHijri.year} AH`;
-
+    const heading = document.getElementById('calendarMonth');
+    if (heading) heading.textContent = `${gregorianMonthNames[month]} ${year} · ${firstHijri.monthName} ${firstHijri.year} AH`;
     const grid = document.getElementById('calendarGrid');
+    if (!grid) return;
     grid.innerHTML = '';
-
     ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].forEach(dayName => {
         const cell = document.createElement('div');
         cell.className = 'text-xs font-bold text-gray-400 p-2';
         cell.textContent = dayName;
+        cell.setAttribute('aria-hidden', 'true');
         grid.appendChild(cell);
     });
-
-    for (let i = 0; i < startingDay; i++) {
-        grid.appendChild(document.createElement('div'));
-    }
-
-    const today = new Date();
-    const todayParts = getGregorianDateParts(today);
-
+    for (let i = 0; i < startingDay; i++) grid.appendChild(document.createElement('div'));
     for (let day = 1; day <= daysInMonth; day++) {
-        const cellDate = new Date(year, month, day);
+        const cellDate = zonedTimeToDate(year, month + 1, day, 12, 0, userSettings.timeZone);
         const hijri = gregorianToHijri(cellDate);
-        const isToday = year === todayParts.year
-            && month + 1 === todayParts.month
-            && day === todayParts.day;
-
-        cell.className = `p-2 rounded-lg ${isToday
-            ? 'bg-teal-500 text-white'
-            : 'hover:bg-gray-100 dark:hover:bg-gray-700'} cursor-pointer`;
+        const isToday = year === nowParts.year && month + 1 === nowParts.month && day === nowParts.day;
+        const cell = document.createElement('div');
+        cell.className = `calendar-day p-2 rounded-lg ${isToday ? 'bg-teal-500 text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`;
         cell.setAttribute('aria-label', `${formatGregorianDate(cellDate)}, ${formatHijriDate(hijri)}`);
-        cell.innerHTML = `
-            <div class="font-bold">${day}</div>
-            <div class="text-xs opacity-70">${hijri.day} ${hijri.monthName}</div>
-        `;
+        cell.innerHTML = `<div class="font-bold">${day}</div><div class="text-xs opacity-70">${hijri.day} ${hijri.monthName}</div>`;
         grid.appendChild(cell);
     }
-
-    if (firstHijri.month !== lastHijri.month) {
-        document.getElementById('calendarMonth').textContent =
-            `${gregorianMonthNames[month]} ${year} · ${firstHijri.monthName}–${lastHijri.monthName} ${lastHijri.year} AH`;
-    }
+    if (firstHijri.month !== lastHijri.month && heading) heading.textContent = `${gregorianMonthNames[month]} ${year} · ${firstHijri.monthName}–${lastHijri.monthName} ${lastHijri.year} AH`;
 }
 
 function changeMonth(delta) {

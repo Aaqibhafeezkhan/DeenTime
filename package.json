@@ -1,0 +1,8 @@
+{
+  "name": "deentime",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "test": "node tests/praytimes.test.js && node tests/phase6.test.js && node tests/phase7.test.js && node tests/phase8.test.js && node tests/phase9.test.js && node tests/phase10.test.js && node tests/phase11.test.js"
+  }
+}

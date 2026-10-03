@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Icon generator for Azaan Pro PWA
+Icon generator for DeenTime PWA
 Run: python generate-icons.py
 """
 
@@ -62,7 +62,7 @@ def main():
     # Create output directory
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     
-    print("Generating Azaan Pro icons...")
+    print("Generating DeenTime icons...")
     print("-" * 40)
     
     for size in SIZES:

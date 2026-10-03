@@ -2,18 +2,18 @@
 <html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, ">
     <meta name="theme-color" content="#0F766E">
-    <meta name="description" content="Islamic Prayer Times, Qibla Direction, Hijri Calendar, and more">
+    <meta name="description" content="DeenTime: prayer times, Qibla, Hijri calendar, Tasbih, and 99 Names of Allah.">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Azaan Pro - Islamic Prayer Times</title>
+    <title>DeenTime - Islamic Prayer & Faith Companion</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230d9488' width='100' height='100' rx='20'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>☪</text></svg>">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Azaan Pro">
+    <meta name="application-name" content="DeenTime">
     <meta name="msapplication-TileColor" content="#0F766E">
     <meta name="msapplication-TileImage" content="icons/icon-144x144.png">
     <meta name="msapplication-config" content="browserconfig.xml">
@@ -42,12 +42,12 @@
                             <i class="fas fa-mosque text-xl"></i>
                         </div>
                         <div>
-                            <h1 class="text-xl font-bold">Azaan Pro</h1>
+                            <h1 class="text-xl font-bold">DeenTime</h1>
                             <p id="currentDate" class="text-xs opacity-90">Loading...</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button id="themeToggle" class="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition">
+                        <button id="themeToggle" type="button" aria-label="Toggle dark mode" class="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition">
                             <i class="fas fa-moon"></i>
                         </button>
                     </div>
@@ -64,7 +64,7 @@
                 <div class="text-center">
                     <p class="text-sm opacity-90 mb-1">Next Prayer</p>
                     <h2 id="nextPrayerName" class="text-3xl font-bold mb-2">Fajr</h2>
-                    <div id="countdown" class="text-4xl font-mono font-bold">00:00:00</div>
+                    <div id="countdown" role="timer" aria-label="Time remaining until next prayer" class="text-4xl font-mono font-bold">00:00:00</div>
                     <p id="nextPrayerTime" class="text-sm opacity-90 mt-2">--:--</p>
                 </div>
             </div>
@@ -92,8 +92,8 @@
                 <div id="prayerTimes" class="divide-y divide-gray-100 dark:divide-gray-700"></div>
             </div>
 
-            <div class="grid grid-cols-4 gap-3">
-                <button onclick="showTab('qibla')" class="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-md flex flex-col items-center gap-1 hover:bg-teal-50 dark:hover:bg-gray-700 transition">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <button type="button" onclick="showTab('qibla')" class="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-md flex flex-col items-center gap-1 hover:bg-teal-50 dark:hover:bg-gray-700 transition">
                     <i class="fas fa-compass text-teal-500 text-xl"></i>
                     <span class="text-xs text-gray-600 dark:text-gray-300">Qibla</span>
                 </button>
@@ -101,7 +101,7 @@
                     <i class="fas fa-calendar-alt text-teal-500 text-xl"></i>
                     <span class="text-xs text-gray-600 dark:text-gray-300">Calendar</span>
                 </button>
-                <button onclick="showTab('tasbih')" class="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-md flex flex-col items-center gap-1 hover:bg-teal-50 dark:hover:bg-gray-700 transition">
+                <button type="button" onclick="showTab('tasbih')" class="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-md flex flex-col items-center gap-1 hover:bg-teal-50 dark:hover:bg-gray-700 transition">
                     <i class="fas fa-beads text-teal-500 text-xl"></i>
                     <span class="text-xs text-gray-600 dark:text-gray-300">Tasbih</span>
                 </button>
@@ -128,20 +128,20 @@
                         <div class="absolute top-1/2 left-1/2 w-4 h-4 bg-teal-600 rounded-full -translate-x-1/2 -translate-y-1/2 shadow-lg"></div>
                     </div>
                 </div>
-                <p id="qiblaDegree" class="text-center mt-4 text-2xl font-bold text-teal-600">0°</p>
+                <p id="qiblaDegree" class="text-center mt-4 text-2xl font-bold text-teal-600" role="status" aria-live="polite">0°</p>
                 <p class="text-center text-sm text-gray-500 dark:text-gray-400 mt-1">from North</p>
-                <button id="enableCompass" class="w-full mt-4 bg-teal-500 text-white py-2 rounded-lg hover:bg-teal-600 transition">
+                <button id="enableCompass" type="button" aria-label="Enable device compass" class="w-full mt-4 bg-teal-500 text-white py-2 rounded-lg hover:bg-teal-600 transition">
                     Enable Device Compass
                 </button>
             </div>
 
             <div id="calendarPanel" class="hidden bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-md">
                 <div class="flex items-center justify-between mb-4">
-                    <button onclick="changeMonth(-1)" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center">
+                    <button type="button" aria-label="Previous month" onclick="changeMonth(-1)" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center">
                         <i class="fas fa-chevron-left text-gray-600 dark:text-gray-300"></i>
                     </button>
                     <h3 id="calendarMonth" class="font-bold text-gray-800 dark:text-white"></h3>
-                    <button onclick="changeMonth(1)" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center">
+                    <button type="button" aria-label="Next month" onclick="changeMonth(1)" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center">
                         <i class="fas fa-chevron-right text-gray-600 dark:text-gray-300"></i>
                     </button>
                 </div>
@@ -157,33 +157,49 @@
                     <div id="tasbihCount" class="text-6xl font-bold text-teal-600 mb-2">0</div>
                     <div class="flex items-center justify-center gap-2 mb-6">
                         <span class="text-sm text-gray-500">Target:</span>
-                        <button onclick="setTasbihTarget(33)" class="tasbih-target px-3 py-1 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 text-sm font-medium active">33</button>
-                        <button onclick="setTasbihTarget(99)" class="tasbih-target px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-sm font-medium">99</button>
-                        <button onclick="setTasbihTarget(100)" class="tasbih-target px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-sm font-medium">100</button>
+                        <button type="button" onclick="setTasbihTarget(33)" class="tasbih-target px-3 py-1 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 text-sm font-medium active">33</button>
+                        <button type="button" onclick="setTasbihTarget(99)" class="tasbih-target px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-sm font-medium">99</button>
+                        <button type="button" onclick="setTasbihTarget(100)" class="tasbih-target px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-sm font-medium">100</button>
                     </div>
                     <div class="flex gap-3 justify-center">
-                        <button onclick="incrementTasbih()" class="w-24 h-24 rounded-full bg-gradient-to-br from-teal-500 to-emerald-500 text-white text-2xl shadow-lg active:scale-95 transition flex items-center justify-center">
+                        <button type="button" onclick="incrementTasbih()" aria-label="Increment Tasbih count" class="w-24 h-24 rounded-full bg-gradient-to-br from-teal-500 to-emerald-500 text-white text-2xl shadow-lg active:scale-95 transition flex items-center justify-center">
                             <i class="fas fa-plus"></i>
                         </button>
-                        <button onclick="resetTasbih()" class="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 shadow-md active:scale-95 transition flex items-center justify-center">
+                        <button type="button" onclick="resetTasbih()" aria-label="Reset Tasbih count" class="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 shadow-md active:scale-95 transition flex items-center justify-center">
                             <i class="fas fa-undo"></i>
                         </button>
                     </div>
                     <div class="mt-4 flex gap-2 justify-center">
-                        <button onclick="setDhikr('SubhanAllah')" class="dhikr-btn px-4 py-2 rounded-lg bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 text-sm font-medium active">SubhanAllah</button>
-                        <button onclick="setDhikr('Alhamdulillah')" class="dhikr-btn px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-sm font-medium">Alhamdulillah</button>
-                        <button onclick="setDhikr('Allahu Akbar')" class="dhikr-btn px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-sm font-medium">Allahu Akbar</button>
+                        <button type="button" onclick="setDhikr('SubhanAllah')" class="dhikr-btn px-4 py-2 rounded-lg bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 text-sm font-medium active">SubhanAllah</button>
+                        <button type="button" onclick="setDhikr('Alhamdulillah')" class="dhikr-btn px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-sm font-medium">Alhamdulillah</button>
+                        <button type="button" onclick="setDhikr('Allahu Akbar')" class="dhikr-btn px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-sm font-medium">Allahu Akbar</button>
                     </div>
                 </div>
             </div>
 
-            <div id="namesPanel" class="hidden bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-md">
-                <h3 class="font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                    <i class="fas fa-star text-teal-500"></i>
-                    99 Names of Allah
-                </h3>
-                <div id="namesList" class="grid grid-cols-3 gap-2 max-h-96 overflow-y-auto"></div>
-            </div>
+            <section id="namesPanel" class="hidden bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-md" aria-labelledby="namesHeading">
+                <div class="flex items-center justify-between gap-3 mb-4">
+                    <h3 id="namesHeading" class="font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                        <i class="fas fa-star text-teal-500" aria-hidden="true"></i>
+                        99 Names of Allah
+                    </h3>
+                    <span id="namesResultCount" class="text-xs text-gray-500 dark:text-gray-400" role="status" aria-live="polite"></span>
+                </div>
+                <label class="sr-only" for="namesSearch">Search the Names of Allah</label>
+                <input id="namesSearch" type="search" inputmode="search" autocomplete="off" placeholder="Search name or meaning" class="w-full p-3 mb-3 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+                <div id="namesList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-[32rem] overflow-y-auto"></div>
+            </section>
+            <dialog id="nameDetailDialog" class="w-[min(92vw,28rem)] rounded-2xl p-0 shadow-xl bg-white dark:bg-gray-800 text-gray-800 dark:text-white">
+                <div class="p-6">
+                    <div class="flex items-center justify-between gap-3">
+                        <span id="nameDetailNumber" class="text-xs font-semibold text-teal-600 dark:text-teal-400"></span>
+                        <button id="closeNameDialog" type="button" aria-label="Close name details" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-200">×</button>
+                    </div>
+                    <p id="nameDetailArabic" class="text-4xl font-bold text-teal-700 dark:text-teal-300 mt-5 text-center" dir="rtl" lang="ar"></p>
+                    <p id="nameDetailEnglish" class="text-xl font-semibold text-center mt-3"></p>
+                    <p id="nameDetailMeaning" class="text-sm text-gray-500 dark:text-gray-400 text-center mt-2"></p>
+                </div>
+            </dialog>
 
             <div class="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-md">
                 <h3 class="font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
@@ -211,20 +227,48 @@
                         </select>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Notifications</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Browser notifications</span>
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="notifications" class="sr-only peer">
+                            <input type="checkbox" id="notifications" aria-label="Allow browser notification permission" class="sr-only peer">
                             <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-500"></div>
                         </label>
                     </div>
+                    <p id="notificationStatus" class="text-xs text-gray-500 dark:text-gray-400" role="status" aria-live="polite"></p>
                     <div class="flex items-center justify-between">
                         <span class="text-sm text-gray-600 dark:text-gray-400">24-Hour Format</span>
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="timeFormat" class="sr-only peer">
+                            <input type="checkbox" id="timeFormat" aria-label="Use 24-hour time format" class="sr-only peer">
                             <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-500"></div>
                         </label>
                     </div>
-                    <button onclick="detectLocation()" class="w-full bg-teal-500 text-white py-3 rounded-lg hover:bg-teal-600 transition flex items-center justify-center gap-2">
+                                        <div id="locationSettings" class="pt-2 border-t border-gray-100 dark:border-gray-700">
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="latitudeInput">Prayer Location</label>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Coordinates and timezone stay on this device.</p>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <label class="text-xs text-gray-500 dark:text-gray-400" for="latitudeInput">Latitude
+                                <input id="latitudeInput" type="number" step="0.000001" min="-90" max="90" class="mt-1 w-full p-3 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                            </label>
+                            <label class="text-xs text-gray-500 dark:text-gray-400" for="longitudeInput">Longitude
+                                <input id="longitudeInput" type="number" step="0.000001" min="-180" max="180" class="mt-1 w-full p-3 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                            </label>
+                        </div>
+                        <label class="block mt-3 text-xs text-gray-500 dark:text-gray-400" for="timezoneInput">IANA Timezone
+                            <input id="timezoneInput" type="text" placeholder="Asia/Kolkata" autocomplete="off" class="mt-1 w-full p-3 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                        </label>
+                        <p id="locationSettingsMessage" class="mt-2 text-xs" role="status" aria-live="polite"></p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
+                            <button id="saveLocationSettings" type="button" class="w-full bg-teal-500 text-white py-3 rounded-lg hover:bg-teal-600 transition flex items-center justify-center gap-2">
+                                <i class="fas fa-save" aria-hidden="true"></i>
+                                Save Prayer Location
+                            </button>
+                            <button id="resetSettings" type="button" class="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 py-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                                Reset Local Settings
+                            </button>
+                        </div>
+                    </div>
+                    <button id="detectLocationButton" type="button" class="w-full bg-teal-500 text-white py-3 rounded-lg hover:bg-teal-600 transition flex items-center justify-center gap-2">
                         <i class="fas fa-location-arrow"></i>
                         Detect My Location
                     </button>
@@ -232,22 +276,22 @@
             </div>
         </main>
 
-        <nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg">
+        <nav aria-label="Primary navigation" class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg">
             <div class="container mx-auto">
                 <div class="flex justify-around py-2">
-                    <button onclick="showMain()" class="nav-btn flex flex-col items-center gap-1 p-2 text-teal-600 dark:text-teal-400 active">
+                    <button type="button" onclick="showMain()" class="nav-btn flex flex-col items-center gap-1 p-2 text-teal-600 dark:text-teal-400 active">
                         <i class="fas fa-home text-lg"></i>
                         <span class="text-xs">Home</span>
                     </button>
-                    <button onclick="showTab('qibla')" class="nav-btn flex flex-col items-center gap-1 p-2 text-gray-400 dark:text-gray-500">
+                    <button type="button" onclick="showTab('qibla')" class="nav-btn flex flex-col items-center gap-1 p-2 text-gray-400 dark:text-gray-500">
                         <i class="fas fa-compass text-lg"></i>
                         <span class="text-xs">Qibla</span>
                     </button>
-                    <button onclick="showTab('tasbih')" class="nav-btn flex flex-col items-center gap-1 p-2 text-gray-400 dark:text-gray-500">
+                    <button type="button" onclick="showTab('tasbih')" class="nav-btn flex flex-col items-center gap-1 p-2 text-gray-400 dark:text-gray-500">
                         <i class="fas fa-beads text-lg"></i>
                         <span class="text-xs">Tasbih</span>
                     </button>
-                    <button onclick="showTab('more')" class="nav-btn flex flex-col items-center gap-1 p-2 text-gray-400 dark:text-gray-500">
+                    <button type="button" onclick="showMain()" class="nav-btn flex flex-col items-center gap-1 p-2 text-gray-400 dark:text-gray-500">
                         <i class="fas fa-ellipsis-h text-lg"></i>
                         <span class="text-xs">More</span>
                     </button>
@@ -255,214 +299,16 @@
             </div>
         </nav>
 
+        <div id="updateNotice" class="hidden fixed top-3 left-1/2 -translate-x-1/2 z-[60] max-w-[92vw] rounded-lg bg-gray-900 text-white px-4 py-2 text-sm shadow-lg" role="status">DeenTime has been updated. Reload when convenient.</div>
         <audio id="azaanPlayer" preload="none"></audio>
     </div>
 
     <script src="praytimes.js"></script>
-    <script src="script.js"></script>
-    <script>
-        (function () {
-            function getBrowserTimeZone() {
-                return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-            }
-
-            function getTimeZoneOffsetHours(timeZone, date) {
-                const parts = new Intl.DateTimeFormat('en-US', { timeZone, timeZoneName: 'longOffset' }).formatToParts(date);
-                const value = parts.find(part => part.type === 'timeZoneName')?.value || 'GMT';
-                const match = value.match(/GMT([+-])(\\d{2})(?::(\\d{2}))?/);
-                if (!match) return 0;
-                const sign = match[1] === '+' ? 1 : -1;
-                return sign * (Number(match[2]) + Number(match[3] || 0) / 60);
-            }
-
-            function isValidTimeZone(timeZone) {
-                try {
-                    new Intl.DateTimeFormat('en-US', { timeZone }).format();
-                    return true;
-                } catch (error) {
-                    return false;
-                }
-            }
-
-            function syncTimeZone() {
-                if (!userSettings.timeZone || !isValidTimeZone(userSettings.timeZone)) {
-                    userSettings.timeZone = getBrowserTimeZone();
-                }
-                const label = document.getElementById('timezoneText');
-                if (label) {
-                    const offset = getTimeZoneOffsetHours(userSettings.timeZone, new Date());
-                    const sign = offset >= 0 ? '+' : '-';
-                    const absolute = Math.abs(offset);
-                    const hours = Math.floor(absolute);
-                    const minutes = Math.round((absolute - hours) * 60);
-                    label.textContent = `${userSettings.timeZone} (UTC${sign}${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')})`;
-                }
-            }
-
-            function calculateWithSelectedTimeZone() {
-                const date = new Date();
-                const timeZone = userSettings.timeZone || getBrowserTimeZone();
-                const timezoneOffset = getTimeZoneOffsetHours(timeZone, date);
-                const times = prayerTimesCalc.getTimes(
-                    [date.getFullYear(), date.getMonth() + 1, date.getDate()],
-                    [userSettings.location.lat, userSettings.location.lng],
-                    timezoneOffset,
-                    0,
-                    userSettings.timeFormat
-                );
-
-                currentPrayerTimes = {
-                    fajr: times.fajr,
-                    sunrise: times.sunrise,
-                    dhuhr: times.dhuhr,
-                    asr: times.asr,
-                    maghrib: times.maghrib,
-                    isha: times.isha
-                };
-
-                renderPrayerTimes();
-                updateNextPrayer();
-                calculateQibla();
-                document.getElementById('loading').style.display = 'none';
-                syncTimeZone();
-            }
-
-            function updateLocationName(lat, lng) {
-                getLocationName(lat, lng);
-            }
-
-            function createLocationSettings() {
-                const settingsHeading = Array.from(document.querySelectorAll('h3')).find(element => element.textContent.trim() === 'Settings');
-                const settingsPanel = settingsHeading?.closest('.bg-white');
-                const settingsSpace = settingsPanel?.querySelector('.space-y-4');
-                if (!settingsSpace || document.getElementById('locationSettings')) return;
-
-                const section = document.createElement('div');
-                section.id = 'locationSettings';
-                section.className = 'pt-2 border-t border-gray-100 dark:border-gray-700';
-                section.innerHTML = `
-                    <div class="flex items-center justify-between mb-3">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Prayer Location</label>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Review or set the coordinates used for prayer calculations.</p>
-                        </div>
-                        <span id="timezoneText" class="text-xs text-teal-600 dark:text-teal-400 text-right"></span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <label class="text-xs text-gray-500 dark:text-gray-400">
-                            Latitude
-                            <input id="latitudeInput" type="number" step="0.000001" min="-90" max="90" class="mt-1 w-full p-3 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white" aria-label="Latitude">
-                        </label>
-                        <label class="text-xs text-gray-500 dark:text-gray-400">
-                            Longitude
-                            <input id="longitudeInput" type="number" step="0.000001" min="-180" max="180" class="mt-1 w-full p-3 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white" aria-label="Longitude">
-                        </label>
-                    </div>
-                    <label class="block mt-3 text-xs text-gray-500 dark:text-gray-400">
-                        IANA Timezone
-                        <input id="timezoneInput" type="text" placeholder="Asia/Kolkata" class="mt-1 w-full p-3 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white" aria-label="IANA timezone">
-                    </label>
-                    <div id="locationSettingsMessage" class="mt-2 text-xs" role="status" aria-live="polite"></div>
-                    <button id="saveLocationSettings" type="button" class="w-full mt-3 bg-teal-500 text-white py-3 rounded-lg hover:bg-teal-600 transition flex items-center justify-center gap-2">
-                        <i class="fas fa-save"></i>
-                        Save Prayer Location
-                    </button>
-                `;
-
-                const detectButton = Array.from(settingsSpace.querySelectorAll('button')).find(button => button.textContent.includes('Detect My Location'));
-                settingsSpace.insertBefore(section, detectButton || null);
-
-                const latitudeInput = document.getElementById('latitudeInput');
-                const longitudeInput = document.getElementById('longitudeInput');
-                const timezoneInput = document.getElementById('timezoneInput');
-                const message = document.getElementById('locationSettingsMessage');
-
-                latitudeInput.value = Number(userSettings.location?.lat ?? 21.4225).toFixed(6);
-                longitudeInput.value = Number(userSettings.location?.lng ?? 39.8262).toFixed(6);
-                timezoneInput.value = userSettings.timeZone || getBrowserTimeZone();
-                syncTimeZone();
-
-                document.getElementById('saveLocationSettings').addEventListener('click', () => {
-                    const lat = Number(latitudeInput.value);
-                    const lng = Number(longitudeInput.value);
-                    const timeZone = timezoneInput.value.trim();
-
-                    if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lng) || lng < -180 || lng > 180) {
-                        message.textContent = 'Enter a valid latitude and longitude.';
-                        message.className = 'mt-2 text-xs text-red-600 dark:text-red-400';
-                        return;
-                    }
-
-                    if (!isValidTimeZone(timeZone)) {
-                        message.textContent = 'Enter a valid IANA timezone, for example Asia/Kolkata.';
-                        message.className = 'mt-2 text-xs text-red-600 dark:text-red-400';
-                        return;
-                    }
-
-                    userSettings.location = { lat, lng };
-                    userSettings.timeZone = timeZone;
-                    userSettings.locationName = `${lat.toFixed(2)}, ${lng.toFixed(2)}`;
-                    saveSettings();
-                    updateLocationText(userSettings.locationName);
-                    calculateWithSelectedTimeZone();
-                    message.textContent = 'Prayer location saved.';
-                    message.className = 'mt-2 text-xs text-teal-600 dark:text-teal-400';
-                });
-            }
-
-            const originalDetectLocation = detectLocation;
-            window.detectLocation = function () {
-                if (!navigator.geolocation) {
-                    updateLocationText('Geolocation not supported');
-                    calculateWithSelectedTimeZone();
-                    return;
-                }
-
-                updateLocationText('Detecting location...');
-                navigator.geolocation.getCurrentPosition(
-                    position => {
-                        userSettings.location = {
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude
-                        };
-                        userSettings.locationName = '';
-                        userSettings.timeZone = getBrowserTimeZone();
-                        saveSettings();
-                        updateLocationName(userSettings.location.lat, userSettings.location.lng);
-                        calculateWithSelectedTimeZone();
-                        const latitudeInput = document.getElementById('latitudeInput');
-                        const longitudeInput = document.getElementById('longitudeInput');
-                        const timezoneInput = document.getElementById('timezoneInput');
-                        if (latitudeInput) latitudeInput.value = userSettings.location.lat.toFixed(6);
-                        if (longitudeInput) longitudeInput.value = userSettings.location.lng.toFixed(6);
-                        if (timezoneInput) timezoneInput.value = userSettings.timeZone;
-                    },
-                    error => {
-                        syncTimeZone();
-                        saveSettings();
-                        updateLocationText(userSettings.locationName || 'Saved location');
-                        calculateWithSelectedTimeZone();
-                    },
-                    { timeout: 10000, enableHighAccuracy: true, maximumAge: 300000 }
-                );
-            };
-
-            const originalCalculatePrayerTimes = calculatePrayerTimes;
-            window.calculatePrayerTimes = calculateWithSelectedTimeZone;
-
-            const originalLoadSettings = loadSettings;
-            window.loadSettings = function () {
-                originalLoadSettings();
-                if (!userSettings.timeZone || !isValidTimeZone(userSettings.timeZone)) {
-                    userSettings.timeZone = getBrowserTimeZone();
-                }
-            };
-
-            document.addEventListener('DOMContentLoaded', () => {
-                createLocationSettings();
-                syncTimeZone();
-            }, { once: true });
-        })();
-    </script>
+    <script src="names-of-allah.js"></script>
+    <script src="script-core.js"></script>
+    <script src="phase4.js"></script>
+    <script src="phase5.js"></script>
+    <script src="phase6.js"></script>
+    <script src="phase7.js"></script>
 </body>
 </html>
