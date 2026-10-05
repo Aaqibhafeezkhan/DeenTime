@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'deentime-v1.0.0';
+const CACHE_VERSION = 'deentime-v1.0.1';
 const CORE_CACHE = CACHE_VERSION + '-core';
 const RUNTIME_CACHE = CACHE_VERSION + '-runtime';
 const BASE_URL = self.registration.scope;
@@ -6,6 +6,7 @@ const BASE_URL = self.registration.scope;
 const STATIC_ASSETS = [
     '',
     'index.html',
+    'privacy.html',
     'style.css',
     'praytimes.js',
     'names-of-allah.js',

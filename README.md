@@ -68,17 +68,26 @@ The service-worker cache is versioned using `CACHE_VERSION`. Updating the versio
 
 ## Manual deployment and release
 
-Deployment is intentionally manual. Publish the repository's static files to the target static host.
+Production hosting is targeted at Vercel as a static deployment. Deployment remains manual and the GitHub repository is not connected to an automatic Vercel Git deployment.
+
+Run:
+
+```text
+npm test
+vercel --prod
+```
 
 For each release:
 
 1. Update `VERSION`.
-2. Update `CACHE_VERSION` in `service-worker.js` to the same version.
-3. Run `npm test`.
-4. Load the app once online, then verify core features with the network disabled.
-5. Tag the release using the same version, for example `v1.0.0`.
+2. Update the matching `version` in `package.json`.
+3. Update `CACHE_VERSION` in `service-worker.js` to the same version.
+4. Run `npm test`.
+5. Deploy with `vercel --prod`.
+6. Load the production app once online, then verify core features with the network disabled.
+7. Keep the launch smoke-test and rollback procedure in [LAUNCH.md](LAUNCH.md).
 
-No automatic deployment pipeline is required.
+No GitHub Actions workflow or automatic deployment pipeline is required.
 
 ## Icon tooling
 
@@ -93,4 +102,4 @@ Run `python generate-icons.py` with Pillow installed to generate the declared PW
 
 ## Release status
 
-The DeenTime roadmap is implemented through the completed Phase 1–12 issues tracked under Epic #3. Deployment and GTM are intentionally handled separately from repository implementation.
+The DeenTime roadmap is implemented through the completed Phase 1–12 issues tracked under Epic #3. The repository now includes the launch engineering baseline for Issue #22, including manual Vercel deployment configuration, release-safe service-worker caching, a public privacy page, and a launch/readiness plan. Real-device production smoke tests and the final public domain decision remain operational launch steps.
