@@ -13,17 +13,17 @@ Thank you for considering a contribution to DeenTime. The project is a framework
 
 Use a current Node.js release and Python 3.
 
-```sh
+~~~sh
 python -m http.server 8000
-```
+~~~
 
 Open http://localhost:8000 in a browser. Some browser APIs, including service workers, require HTTP or HTTPS rather than opening the HTML file directly.
 
 ## Run the tests
 
-```sh
+~~~sh
 npm test
-```
+~~~
 
 The test suite is deterministic and does not require real geolocation, device sensors, notification permission, or external APIs.
 
@@ -33,15 +33,15 @@ The test suite is deterministic and does not require real geolocation, device se
 2. Make the smallest change that solves the problem.
 3. Add or update deterministic tests when behavior changes.
 4. Preserve the local-first privacy model; do not introduce accounts, analytics, external geocoding, or backend services without an approved issue.
-5. Do not add GitHub Actions or automatic deployment configuration.
+5. Production deployment is manual; the deploy workflow must not run automatically on pushes or pull requests.
 6. Include a concise summary and a self-review note in the PR description.
 7. Run `npm test` before opening the PR and describe the result accurately.
 
 ## Release and deployment
 
-Production deployment is manual and uses Vercel. Contributors should not deploy to production as part of an ordinary PR.
+Production deployment uses a manually triggered GitHub Actions workflow and Vercel. Contributors should not deploy to production as part of an ordinary PR.
 
-A maintainer can run `./scripts/deploy.sh` from the repository root after updating and reviewing the release version. The script runs the full test suite before invoking `vercel --prod`. Follow [LAUNCH.md](LAUNCH.md) for version alignment, production smoke tests, and rollback.
+A maintainer can run **Actions → Manual Deploy → Run workflow** after reviewing the release version. Configure the `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID` repository secrets first. The workflow runs the test suite before deploying. Follow [LAUNCH.md](LAUNCH.md) for version alignment, production smoke tests, and rollback.
 
 ## Project boundaries
 

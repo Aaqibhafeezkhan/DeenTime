@@ -4,7 +4,7 @@
 
 DeenTime remains a framework-free static PWA with no backend, accounts, or analytics.
 
-Production hosting target: **Vercel**, using a manual production deployment. The GitHub repository is not connected to automatic Vercel Git deployments, and no GitHub Actions workflow is required.
+Production hosting target: **Vercel**, using a manually triggered GitHub Actions workflow. The workflow does not run on pushes or pull requests.
 
 The initial production URL is the Vercel production domain assigned to the project. A custom DeenTime domain can be added after availability and naming are confirmed.
 
@@ -18,14 +18,9 @@ The browser still makes normal network requests to the production host and to th
 
 ## Manual production deployment
 
-Run from the repository root with the production version committed:
+Configure these repository Actions secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID`.
 
-```text
-npm test
-vercel --prod
-```
-
-Do not connect the repository to an automatic Git deployment for this launch.
+After the production version is committed, open **Actions → Manual Deploy → Run workflow**. The workflow runs `npm test`, builds the production output, and deploys it to Vercel. It is not triggered by pushes or pull requests.
 
 For each release:
 
@@ -33,7 +28,7 @@ For each release:
 2. Update `version` in `package.json`.
 3. Update `CACHE_VERSION` in `service-worker.js` to the same version.
 4. Run `npm test`.
-5. Deploy with `vercel --prod`.
+5. Review the release and manually run the **Manual Deploy** workflow.
 6. Validate the production URL online before sharing it publicly.
 7. Exercise the offline flow after the site has been loaded successfully once.
 8. Record the production deployment URL and release version.
@@ -60,11 +55,11 @@ Validate these on at least one current desktop browser and one current Android/i
 
 For Vercel production:
 
-```text
+~~~text
 vercel rollback
-```
+~~~
 
-When a deployment must be replaced rather than rolled back, deploy the previously validated commit manually and re-run the smoke test before sharing the URL again.
+When a deployment must be replaced rather than rolled back, manually deploy the previously validated commit and re-run the smoke test before sharing the URL again.
 
 ## Initial positioning
 
