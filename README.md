@@ -100,3 +100,35 @@ Run `python generate-icons.py` with Pillow installed to generate the declared PW
 ## Release status
 
 The DeenTime roadmap is implemented through the completed Phase 1–12 issues tracked under Epic #3. The repository includes the launch engineering baseline for Issue #22, including release-safe service-worker caching, a public privacy page, and a launch/readiness plan. Real-device production smoke tests and the final public domain decision remain operational launch steps.
+
+
+---
+<!-- Documentation improvement for issue #26 -->
+# DeenTime
+
+## Installation
+
+```bash
+npm install
+```
+
+## Usage
+
+```javascript
+const { createClient } = require('./src');
+const client = createClient({ apiKey: process.env.API_KEY });
+const result = await client.process('input');
+console.log(result);
+```
+
+## Configuration
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `apiKey` | string | required | Your API authentication key |
+| `timeout` | number | 5000 | Request timeout in milliseconds |
+| `retries` | number | 3 | Number of automatic retries on failure |
+
+## Contributing
+
+Pull requests are welcome. Please ensure tests pass with `npm test` before submitting.
