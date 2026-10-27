@@ -508,6 +508,9 @@ function renderNamesOfAllah() {
 
     const resultCount = document.getElementById('namesResultCount');
     if (resultCount) resultCount.textContent = query ? `${filtered.length} of ${namesOfAllah.length} names shown` : `${namesOfAllah.length} names`;
+
+    const emptyState = document.getElementById('namesEmptyState');
+    if (emptyState) emptyState.classList.toggle('hidden', !query || filtered.length > 0);
 }
 
 function openNameDetails(name) {
