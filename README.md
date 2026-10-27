@@ -70,21 +70,19 @@ The service worker precaches the application shell and local icon assets. Naviga
 
 The service-worker cache is versioned using `CACHE_VERSION`. Updating the version during a release removes stale DeenTime caches and lets the application show a non-blocking update notice.
 
-## Manual deployment and release
+## Deployment and release
 
-Production hosting targets Vercel. Deployment is manual and can be started from **Actions → Manual Deploy → Run workflow**. The workflow builds and deploys to production; it does not run on pushes or pull requests and does not run `npm test`.
-
-Configure these repository Actions secrets before using the workflow: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID`.
+DeenTime is a static site hosted on GitHub Pages. The **Deploy to GitHub Pages** workflow runs automatically when changes reach `main` and can also be started from **Actions → Deploy to GitHub Pages → Run workflow**. It publishes the repository's static files directly, without an npm install, build, or test step. No deployment secrets are required.
 
 For each release:
 
 1. Update `VERSION`.
 2. Update the matching `version` in `package.json`.
 3. Update `CACHE_VERSION` in `service-worker.js` to the same version.
-4. Run `npm test` locally if you want to check the suite before release.
-5. Review the release and manually run the **Manual Deploy** workflow.
+4. Run `npm test` locally when validating changes.
+5. Merge the reviewed change into `main` or manually run the deployment workflow.
 6. Load the production app once online, then verify core features with the network disabled.
-7. Keep the launch smoke-test and rollback procedure in [LAUNCH.md](LAUNCH.md).
+7. Keep the launch smoke-test procedure in [LAUNCH.md](LAUNCH.md).
 
 ## Icon tooling
 
