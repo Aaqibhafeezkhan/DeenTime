@@ -20,14 +20,14 @@ The browser still makes normal network requests to the production host and to th
 
 Configure these repository Actions secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID`.
 
-After the production version is committed, open **Actions → Manual Deploy → Run workflow**. The workflow runs `npm test`, builds the production output, and deploys it to Vercel. It is not triggered by pushes or pull requests.
+After the production version is committed, open **Actions → Manual Deploy → Run workflow**. The workflow builds the production output and deploys it to Vercel; it does not run `npm test` and is not triggered by pushes or pull requests. Run `npm test` locally when validating changes before a release.
 
 For each release:
 
 1. Update `VERSION`.
 2. Update `version` in `package.json`.
 3. Update `CACHE_VERSION` in `service-worker.js` to the same version.
-4. Run `npm test`.
+4. Run `npm test` locally.
 5. Review the release and manually run the **Manual Deploy** workflow.
 6. Validate the production URL online before sharing it publicly.
 7. Exercise the offline flow after the site has been loaded successfully once.
