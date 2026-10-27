@@ -38,7 +38,7 @@ index.html
   +-- service-worker.js      PWA/offline lifecycle
 ~~~
 
-The application remains framework-free. There is no backend and no GitHub Actions workflow.
+The application remains framework-free. There is no backend.
 
 ## Local development
 
@@ -72,15 +72,9 @@ The service-worker cache is versioned using `CACHE_VERSION`. Updating the versio
 
 ## Manual deployment and release
 
-Production hosting is targeted at Vercel as a static deployment. Deployment remains manual and the GitHub repository is not connected to an automatic Vercel Git deployment.
+Production hosting targets Vercel. Deployment is manual and can be started from **Actions → Manual Deploy → Run workflow**. The workflow runs `npm test` before building and deploying to production; it does not run on pushes or pull requests.
 
-Install the Vercel CLI and authenticate once, then run this from the repository root:
-
-~~~sh
-./scripts/deploy.sh
-~~~
-
-The script runs `npm test` and only proceeds to `vercel --prod` if the tests pass. It does not deploy automatically and does not replace the release checklist.
+Configure these repository Actions secrets before using the workflow: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID`.
 
 For each release:
 
@@ -88,11 +82,9 @@ For each release:
 2. Update the matching `version` in `package.json`.
 3. Update `CACHE_VERSION` in `service-worker.js` to the same version.
 4. Run `npm test`.
-5. Deploy with `./scripts/deploy.sh`.
+5. Review the release and manually run the **Manual Deploy** workflow.
 6. Load the production app once online, then verify core features with the network disabled.
 7. Keep the launch smoke-test and rollback procedure in [LAUNCH.md](LAUNCH.md).
-
-No GitHub Actions workflow or automatic deployment pipeline is required.
 
 ## Icon tooling
 
@@ -107,4 +99,4 @@ Run `python generate-icons.py` with Pillow installed to generate the declared PW
 
 ## Release status
 
-The DeenTime roadmap is implemented through the completed Phase 1–12 issues tracked under Epic #3. The repository now includes the launch engineering baseline for Issue #22, including manual Vercel deployment configuration, release-safe service-worker caching, a public privacy page, and a launch/readiness plan. Real-device production smoke tests and the final public domain decision remain operational launch steps.
+The DeenTime roadmap is implemented through the completed Phase 1–12 issues tracked under Epic #3. The repository includes the launch engineering baseline for Issue #22, including release-safe service-worker caching, a public privacy page, and a launch/readiness plan. Real-device production smoke tests and the final public domain decision remain operational launch steps.
