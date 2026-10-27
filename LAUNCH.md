@@ -4,9 +4,9 @@
 
 DeenTime remains a framework-free static PWA with no backend, accounts, or analytics.
 
-Production hosting target: **Vercel**, using a manually triggered GitHub Actions workflow. The workflow does not run on pushes or pull requests.
+Production hosting target: **GitHub Pages**, using a GitHub Actions workflow that runs on pushes to `main` and supports manual dispatch. The app is published as static files directly from the repository; no build step or deployment credentials are needed.
 
-The initial production URL is the Vercel production domain assigned to the project. A custom DeenTime domain can be added after availability and naming are confirmed.
+The production URL is the GitHub Pages URL configured for this repository. A custom DeenTime domain can be added after availability and naming are confirmed.
 
 ## Privacy and analytics decision
 
@@ -16,11 +16,9 @@ DeenTime does not add product analytics, advertising identifiers, account tracki
 
 The browser still makes normal network requests to the production host and to the third-party CDN resources currently referenced by the application. Those providers may receive normal request metadata under their own policies.
 
-## Manual production deployment
+## Production deployment
 
-Configure these repository Actions secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID`.
-
-After the production version is committed, open **Actions → Manual Deploy → Run workflow**. The workflow builds the production output and deploys it to Vercel; it does not run `npm test` and is not triggered by pushes or pull requests. Run `npm test` locally when validating changes before a release.
+The **Deploy to GitHub Pages** workflow deploys automatically when a change is pushed or merged into `main`. To deploy manually, open **Actions → Deploy to GitHub Pages → Run workflow**. The workflow publishes the static site directly and does not install npm packages, build the app, or run `npm test`. Run `npm test` locally when validating changes before a release.
 
 For each release:
 
@@ -28,7 +26,7 @@ For each release:
 2. Update `version` in `package.json`.
 3. Update `CACHE_VERSION` in `service-worker.js` to the same version.
 4. Run `npm test` locally.
-5. Review the release and manually run the **Manual Deploy** workflow.
+5. Review the release, then merge it into `main` or manually run **Deploy to GitHub Pages**.
 6. Validate the production URL online before sharing it publicly.
 7. Exercise the offline flow after the site has been loaded successfully once.
 8. Record the production deployment URL and release version.
@@ -53,13 +51,7 @@ Validate these on at least one current desktop browser and one current Android/i
 
 ## Rollback
 
-For Vercel production:
-
-~~~text
-vercel rollback
-~~~
-
-When a deployment must be replaced rather than rolled back, manually deploy the previously validated commit and re-run the smoke test before sharing the URL again.
+Revert the deployment-causing change and merge the revert into `main`; GitHub Actions will publish the reverted static files. Re-run the production smoke test before sharing the URL again.
 
 ## Initial positioning
 
