@@ -52,7 +52,7 @@ Then open http://localhost:8000 in a browser.
 
 ## Testing
 
-Run the full deterministic suite:
+Run the deterministic suite locally:
 
 ~~~sh
 npm test
@@ -72,7 +72,7 @@ The service-worker cache is versioned using `CACHE_VERSION`. Updating the versio
 
 ## Manual deployment and release
 
-Production hosting targets Vercel. Deployment is manual and can be started from **Actions → Manual Deploy → Run workflow**. The workflow runs `npm test` before building and deploying to production; it does not run on pushes or pull requests.
+Production hosting targets Vercel. Deployment is manual and can be started from **Actions → Manual Deploy → Run workflow**. The workflow builds and deploys to production; it does not run on pushes or pull requests and does not run `npm test`.
 
 Configure these repository Actions secrets before using the workflow: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID`.
 
@@ -81,7 +81,7 @@ For each release:
 1. Update `VERSION`.
 2. Update the matching `version` in `package.json`.
 3. Update `CACHE_VERSION` in `service-worker.js` to the same version.
-4. Run `npm test`.
+4. Run `npm test` locally if you want to check the suite before release.
 5. Review the release and manually run the **Manual Deploy** workflow.
 6. Load the production app once online, then verify core features with the network disabled.
 7. Keep the launch smoke-test and rollback procedure in [LAUNCH.md](LAUNCH.md).
