@@ -44,21 +44,25 @@ The application remains framework-free. There is no backend and no GitHub Action
 
 Serve the repository over HTTP so service-worker and permission APIs work correctly:
 
-~~~text
+~~~sh
 python -m http.server 8000
 ~~~
 
-Then open the local application in a browser.
+Then open http://localhost:8000 in a browser.
 
 ## Testing
 
 Run the full deterministic suite:
 
-~~~text
+~~~sh
 npm test
 ~~~
 
 The tests avoid live geolocation, device sensors, external APIs, and browser notification services.
+
+## Contributing
+
+DeenTime welcomes focused improvements to correctness, accessibility, privacy, documentation, and usability. Start with the [contributor guide](CONTRIBUTING.md) and browse [open issues](https://github.com/Aaqibhafeezkhan/DeenTime/issues).
 
 ## PWA and offline behavior
 
@@ -70,12 +74,13 @@ The service-worker cache is versioned using `CACHE_VERSION`. Updating the versio
 
 Production hosting is targeted at Vercel as a static deployment. Deployment remains manual and the GitHub repository is not connected to an automatic Vercel Git deployment.
 
-Run:
+Install the Vercel CLI and authenticate once, then run this from the repository root:
 
-```text
-npm test
-vercel --prod
-```
+~~~sh
+./scripts/deploy.sh
+~~~
+
+The script runs `npm test` and only proceeds to `vercel --prod` if the tests pass. It does not deploy automatically and does not replace the release checklist.
 
 For each release:
 
@@ -83,7 +88,7 @@ For each release:
 2. Update the matching `version` in `package.json`.
 3. Update `CACHE_VERSION` in `service-worker.js` to the same version.
 4. Run `npm test`.
-5. Deploy with `vercel --prod`.
+5. Deploy with `./scripts/deploy.sh`.
 6. Load the production app once online, then verify core features with the network disabled.
 7. Keep the launch smoke-test and rollback procedure in [LAUNCH.md](LAUNCH.md).
 
