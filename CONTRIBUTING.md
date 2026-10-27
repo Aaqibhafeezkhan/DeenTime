@@ -35,13 +35,13 @@ The test suite is deterministic and does not require real geolocation, device se
 4. Preserve the local-first privacy model; do not introduce accounts, analytics, external geocoding, or backend services without an approved issue.
 5. Production deployment is manual; the deploy workflow must not run automatically on pushes or pull requests.
 6. Include a concise summary and a self-review note in the PR description.
-7. Run `npm test` before opening the PR and describe the result accurately.
+7. Run `npm test` locally before opening the PR and describe the result accurately.
 
 ## Release and deployment
 
 Production deployment uses a manually triggered GitHub Actions workflow and Vercel. Contributors should not deploy to production as part of an ordinary PR.
 
-A maintainer can run **Actions → Manual Deploy → Run workflow** after reviewing the release version. Configure the `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID` repository secrets first. The workflow runs the test suite before deploying. Follow [LAUNCH.md](LAUNCH.md) for version alignment, production smoke tests, and rollback.
+A maintainer can run **Actions → Manual Deploy → Run workflow** after reviewing the release version. Configure the `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID` repository secrets first. The deployment workflow does not run `npm test`; run the suite locally when validating code changes. Follow [LAUNCH.md](LAUNCH.md) for version alignment, production smoke tests, and rollback.
 
 ## Project boundaries
 
