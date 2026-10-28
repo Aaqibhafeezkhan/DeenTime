@@ -18,7 +18,14 @@ node tests/phase8.test.js
 node tests/phase9.test.js
 node tests/phase10.test.js
 node tests/phase11.test.js
+node tests/timezone.test.js
 ~~~
+
+A saved timezone that is empty, whitespace, or not a supported IANA identifier
+falls back to the default `Asia/Riyadh` when settings load, so an invalid value
+cannot break initialization or date formatting (`tests/timezone.test.js`). The
+test drives `loadSettings()` with a mocked `localStorage`, covering the stored
+value path — including malformed JSON — end to end.
 
 The checks are deterministic and do not depend on live geolocation, device sensors, external APIs, or notification services.
 

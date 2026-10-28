@@ -33,15 +33,15 @@ The test suite is deterministic and does not require real geolocation, device se
 2. Make the smallest change that solves the problem.
 3. Add or update deterministic tests when behavior changes.
 4. Preserve the local-first privacy model; do not introduce accounts, analytics, external geocoding, or backend services without an approved issue.
-5. Production deployment is manual; the deploy workflow must not run automatically on pushes or pull requests.
+5. Production deployment uses GitHub Pages; the deploy workflow supports manual dispatch and runs automatically when changes reach `main`.
 6. Include a concise summary and a self-review note in the PR description.
-7. Run `npm test` before opening the PR and describe the result accurately.
+7. Run `npm test` locally before opening the PR and describe the result accurately.
 
 ## Release and deployment
 
-Production deployment uses a manually triggered GitHub Actions workflow and Vercel. Contributors should not deploy to production as part of an ordinary PR.
+Production deployment uses GitHub Pages. Contributors should not deploy to production as part of an ordinary PR; merging reviewed changes into `main` triggers deployment automatically.
 
-A maintainer can run **Actions → Manual Deploy → Run workflow** after reviewing the release version. Configure the `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID` repository secrets first. The workflow runs the test suite before deploying. Follow [LAUNCH.md](LAUNCH.md) for version alignment, production smoke tests, and rollback.
+A maintainer can also run **Actions → Deploy to GitHub Pages → Run workflow**. The workflow publishes the static repository files directly and requires no deployment secrets, npm install, build, or test step. Run `npm test` locally when validating code changes. Follow [LAUNCH.md](LAUNCH.md) for version alignment, production smoke tests, and rollback.
 
 ## Project boundaries
 
