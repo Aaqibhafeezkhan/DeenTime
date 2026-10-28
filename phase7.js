@@ -79,15 +79,10 @@ function phase7ApplyTasbihState(state) {
     if (status) status.textContent = next.dhikr + ': ' + next.count + ' of ' + next.target;
 }
 
-function phase7PersistTasbihState() {
-    const state = createTasbihState({
-        count: tasbihCount,
-        target: userSettings.tasbihTarget,
-        dhikr: userSettings.currentDhikr
-    });
+function phase7PersistTasbihState(state) {
     phase7WriteTasbihState(state);
-    if (typeof saveSettings === 'function') saveSettings();
     phase7ApplyTasbihState(state);
+    if (typeof saveSettings === 'function') saveSettings();
 }
 
 function setTasbihTarget(target) {
