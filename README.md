@@ -52,13 +52,66 @@ Then open http://localhost:8000 in a browser.
 
 ## Testing
 
-Run the full deterministic suite:
+Run the deterministic test suite locally:
 
 ~~~sh
 npm test
 ~~~
 
 The tests avoid live geolocation, device sensors, external APIs, and browser notification services.
+
+For the manual testing checklist, see [TESTING.md](TESTING.md).
+
+## Verifying prayer-time calculations
+
+Use this checklist when comparing DeenTime's calculated prayer times against a trusted timetable. The comparison is meaningful only when both sources use matching inputs and settings.
+
+### Before comparing
+
+Record the following settings in DeenTime and in the reference timetable:
+
+- **Date:** Use the same Gregorian calendar date in both sources.
+- **Coordinates:** Use the same latitude and longitude. Do not compare results from different locations, even if the displayed place names are similar.
+- **Timezone:** Use the same IANA timezone, such as `Asia/Riyadh`. Confirm that both sources display times in the same local timezone.
+- **Calculation method:** Select the same calculation method in DeenTime and the reference source. If the reference source does not identify its method, note that limitation.
+- **Asr setting:** Match the Asr calculation setting. In particular, distinguish Standard from Hanafi where the sources offer these options.
+- **Adjustments:** Check whether either source applies manual minute adjustments, high-latitude rules, or other local timetable policies. Record any differences rather than assuming the settings are equivalent.
+
+### Repeatable comparison checklist
+
+1. Choose a date and a specific location with known coordinates.
+2. Open DeenTime and enter or confirm those coordinates and the corresponding IANA timezone.
+3. Select the calculation method and Asr setting used by the reference timetable.
+4. Obtain the reference prayer times for the exact same date and location from a trusted timetable or calculation source.
+5. Record the displayed times for Fajr, Sunrise, Dhuhr, Asr, Maghrib, and Isha wherever the reference provides them.
+6. Compare each corresponding time using the same local clock format. If a time differs, record the prayer, DeenTime value, reference value, and difference in minutes.
+7. Recheck the date, coordinates, timezone, calculation method, Asr setting, and any documented adjustments before treating a difference as a calculation defect.
+8. Repeat the comparison for another date or location if you need to investigate whether the difference is consistent.
+
+### Recording results
+
+Use a simple table when reporting a discrepancy:
+
+| Field | Value |
+| --- | --- |
+| Date | YYYY-MM-DD |
+| Latitude / longitude | Coordinates used by both sources |
+| IANA timezone | Timezone used by both sources |
+| DeenTime calculation method | Selected method |
+| Reference source and method | Source name and method, if known |
+| Asr setting | Standard or Hanafi, as applicable |
+| Prayer and observed difference | Prayer name and difference in minutes |
+| Adjustments or other notes | Known settings or differences |
+
+Include the actual values from both sources in a bug report when possible. This makes the result reproducible and helps distinguish a configuration mismatch from a possible calculation issue.
+
+### Interpreting differences
+
+A difference does not automatically mean that DeenTime is incorrect. Trusted timetables, local mosques, and calculation services may use different calculation methods, manual adjustments, rounding conventions, high-latitude policies, or local religious guidance.
+
+If the settings match and a discrepancy remains, document the evidence and investigate the calculation before proposing a code change. Do not assume that one source is authoritative solely because its result differs.
+
+**DeenTime does not replace a local mosque's timetable or guidance from a trusted religious authority.** Use the timetable and practices appropriate to your community.
 
 ## Contributing
 
@@ -70,21 +123,19 @@ The service worker precaches the application shell and local icon assets. Naviga
 
 The service-worker cache is versioned using `CACHE_VERSION`. Updating the version during a release removes stale DeenTime caches and lets the application show a non-blocking update notice.
 
-## Manual deployment and release
+## Deployment and release
 
-Production hosting targets Vercel. Deployment is manual and can be started from **Actions → Manual Deploy → Run workflow**. The workflow runs `npm test` before building and deploying to production; it does not run on pushes or pull requests.
-
-Configure these repository Actions secrets before using the workflow: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID`.
+DeenTime is a static site hosted on GitHub Pages. The **Deploy to GitHub Pages** workflow runs automatically when changes reach `main` and can also be started from **Actions → Deploy to GitHub Pages → Run workflow**. It publishes the repository's static files directly, without an npm install, build, or test step. No deployment secrets are required.
 
 For each release:
 
 1. Update `VERSION`.
 2. Update the matching `version` in `package.json`.
 3. Update `CACHE_VERSION` in `service-worker.js` to the same version.
-4. Run `npm test`.
-5. Review the release and manually run the **Manual Deploy** workflow.
+4. Run `npm test` locally when validating changes.
+5. Merge the reviewed change into `main` or manually run the deployment workflow.
 6. Load the production app once online, then verify core features with the network disabled.
-7. Keep the launch smoke-test and rollback procedure in [LAUNCH.md](LAUNCH.md).
+7. Keep the launch smoke-test procedure in [LAUNCH.md](LAUNCH.md).
 
 ## Icon tooling
 
@@ -100,35 +151,3 @@ Run `python generate-icons.py` with Pillow installed to generate the declared PW
 ## Release status
 
 The DeenTime roadmap is implemented through the completed Phase 1–12 issues tracked under Epic #3. The repository includes the launch engineering baseline for Issue #22, including release-safe service-worker caching, a public privacy page, and a launch/readiness plan. Real-device production smoke tests and the final public domain decision remain operational launch steps.
-
-
----
-<!-- Documentation improvement for issue #26 -->
-# DeenTime
-
-## Installation
-
-```bash
-npm install
-```
-
-## Usage
-
-```javascript
-const { createClient } = require('./src');
-const client = createClient({ apiKey: process.env.API_KEY });
-const result = await client.process('input');
-console.log(result);
-```
-
-## Configuration
-
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `apiKey` | string | required | Your API authentication key |
-| `timeout` | number | 5000 | Request timeout in milliseconds |
-| `retries` | number | 3 | Number of automatic retries on failure |
-
-## Contributing
-
-Pull requests are welcome. Please ensure tests pass with `npm test` before submitting.
