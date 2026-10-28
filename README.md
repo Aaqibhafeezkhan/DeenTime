@@ -52,13 +52,66 @@ Then open http://localhost:8000 in a browser.
 
 ## Testing
 
-Run the deterministic suite locally:
+Run the deterministic test suite locally:
 
 ~~~sh
 npm test
 ~~~
 
 The tests avoid live geolocation, device sensors, external APIs, and browser notification services.
+
+For the manual testing checklist, see [TESTING.md](TESTING.md).
+
+## Verifying prayer-time calculations
+
+Use this checklist when comparing DeenTime's calculated prayer times against a trusted timetable. The comparison is meaningful only when both sources use matching inputs and settings.
+
+### Before comparing
+
+Record the following settings in DeenTime and in the reference timetable:
+
+- **Date:** Use the same Gregorian calendar date in both sources.
+- **Coordinates:** Use the same latitude and longitude. Do not compare results from different locations, even if the displayed place names are similar.
+- **Timezone:** Use the same IANA timezone, such as `Asia/Riyadh`. Confirm that both sources display times in the same local timezone.
+- **Calculation method:** Select the same calculation method in DeenTime and the reference source. If the reference source does not identify its method, note that limitation.
+- **Asr setting:** Match the Asr calculation setting. In particular, distinguish Standard from Hanafi where the sources offer these options.
+- **Adjustments:** Check whether either source applies manual minute adjustments, high-latitude rules, or other local timetable policies. Record any differences rather than assuming the settings are equivalent.
+
+### Repeatable comparison checklist
+
+1. Choose a date and a specific location with known coordinates.
+2. Open DeenTime and enter or confirm those coordinates and the corresponding IANA timezone.
+3. Select the calculation method and Asr setting used by the reference timetable.
+4. Obtain the reference prayer times for the exact same date and location from a trusted timetable or calculation source.
+5. Record the displayed times for Fajr, Sunrise, Dhuhr, Asr, Maghrib, and Isha wherever the reference provides them.
+6. Compare each corresponding time using the same local clock format. If a time differs, record the prayer, DeenTime value, reference value, and difference in minutes.
+7. Recheck the date, coordinates, timezone, calculation method, Asr setting, and any documented adjustments before treating a difference as a calculation defect.
+8. Repeat the comparison for another date or location if you need to investigate whether the difference is consistent.
+
+### Recording results
+
+Use a simple table when reporting a discrepancy:
+
+| Field | Value |
+| --- | --- |
+| Date | YYYY-MM-DD |
+| Latitude / longitude | Coordinates used by both sources |
+| IANA timezone | Timezone used by both sources |
+| DeenTime calculation method | Selected method |
+| Reference source and method | Source name and method, if known |
+| Asr setting | Standard or Hanafi, as applicable |
+| Prayer and observed difference | Prayer name and difference in minutes |
+| Adjustments or other notes | Known settings or differences |
+
+Include the actual values from both sources in a bug report when possible. This makes the result reproducible and helps distinguish a configuration mismatch from a possible calculation issue.
+
+### Interpreting differences
+
+A difference does not automatically mean that DeenTime is incorrect. Trusted timetables, local mosques, and calculation services may use different calculation methods, manual adjustments, rounding conventions, high-latitude policies, or local religious guidance.
+
+If the settings match and a discrepancy remains, document the evidence and investigate the calculation before proposing a code change. Do not assume that one source is authoritative solely because its result differs.
+
+**DeenTime does not replace a local mosque's timetable or guidance from a trusted religious authority.** Use the timetable and practices appropriate to your community.
 
 ## Contributing
 
