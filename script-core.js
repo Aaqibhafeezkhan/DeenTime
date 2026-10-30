@@ -508,6 +508,13 @@ function renderNamesOfAllah() {
 
     const resultCount = document.getElementById('namesResultCount');
     if (resultCount) resultCount.textContent = query ? `${filtered.length} of ${namesOfAllah.length} names shown` : `${namesOfAllah.length} names`;
+
+    const emptyState = document.getElementById('namesEmptyState');
+    if (emptyState) {
+        const hideEmpty = !query || filtered.length > 0;
+        emptyState.classList.toggle('hidden', hideEmpty);
+        emptyState.textContent = hideEmpty ? '' : 'No names match this search. Try a different word, or clear the search to see all 99 names.';
+    }
 }
 
 function openNameDetails(name) {
