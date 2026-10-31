@@ -47,4 +47,4 @@ function runFailure(error, supported = true) {
 assert.match(runFailure({ code: 1 }), /permission denied.*manually/i, 'denial should provide actionable status');
 assert.match(runFailure({ code: 3 }), /timed out.*manually/i, 'timeout should provide actionable status');
 assert.match(runFailure({ code: 2 }), /unavailable.*manually/i, 'generic failure should provide actionable status');
-assert.match(runFailure(null, false), /not supported/i, 'unsupported geolocation should be explained');
+assert.match(runFailure(null, false), /not supported.*(?:enter coordinates manually|manual location settings)/i, 'unsupported geolocation should provide an actionable manual fallback');

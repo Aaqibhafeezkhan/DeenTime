@@ -91,7 +91,7 @@ function gregorianToHijri(date) {
 
 function detectLocation() {
     if (!navigator.geolocation) {
-        updateLocationText('Geolocation is not supported by this browser.');
+        updateLocationText('Geolocation is not supported by this browser. Enter coordinates manually in location settings.');
         return;
     }
 
