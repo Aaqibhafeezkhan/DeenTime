@@ -107,9 +107,14 @@ function detectLocation() {
             updateLocationDisplay();
             calculatePrayerTimes();
         },
-        () => {
-            updateLocationDisplay();
+        error => {
+            const message = error?.code === 1
+                ? 'Location permission denied. Allow access or enter coordinates manually.'
+                : error?.code === 3
+                    ? 'Location request timed out. Enter coordinates manually or try again.'
+                    : 'Location unavailable. Enter coordinates manually or try again.';
             calculatePrayerTimes();
+            updateLocationText(`${userSettings.locationName || formatCoordinates(userSettings.location)} — ${message}`);
         },
         { timeout: 10000, enableHighAccuracy: false, maximumAge: 300000 }
     );
