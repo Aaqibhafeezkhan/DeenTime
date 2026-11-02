@@ -29,7 +29,7 @@ assert(vercel.headers.some(entry =>
     entry.headers.some(header => header.key === 'X-Content-Type-Options' && header.value === 'nosniff')
 ), 'Security headers must be defined');
 assert(privacy.includes('local-first'), 'Privacy page must explain the local-first model');
-assert(launch.includes('Production hosting target: **Vercel**'), 'Launch plan must document the hosting decision');
+assert(launch.includes('Production hosting target: **GitHub Pages**'), 'Launch plan must document the hosting decision');
 assert(!index.includes('Azaan Pro'), 'Legacy branding must not return');
 assert(!index.includes('document.write'), 'Legacy document loader must not return');
 assert(!packageJson.scripts.test.includes('.github/workflows'), 'No GitHub Actions dependency belongs in the test script');

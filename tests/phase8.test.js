@@ -7,8 +7,10 @@ const context = {};
 vm.runInNewContext(source + '\nthis.namesOfAllah = namesOfAllah;', context);
 
 assert.equal(context.namesOfAllah.length, 99);
+// Array.from builds the array in this realm; arrays from the vm context have a different
+// prototype, which strict deepEqual rejects.
 assert.deepEqual(
-    context.namesOfAllah.map(name => name.number),
+    Array.from(context.namesOfAllah, name => name.number),
     Array.from({ length: 99 }, (_, index) => index + 1)
 );
 assert.equal(new Set(context.namesOfAllah.map(name => name.ar)).size, 99);
