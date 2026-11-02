@@ -192,9 +192,13 @@ function PrayTimes(method) {
             var maghribMinutes = parseFloat(setting.maghrib) || 0;
             times.maghrib = times.sunset + maghribMinutes / 60.0;
         }
-        if (typeof setting.imsak === 'string') {
-            var imsakMinutes = parseFloat(setting.imsak) || 0;
-            times.imsak = times.fajr + imsakMinutes / 60.0;
+        if (typeof setting.isha === 'string') {
+            var ishaMinutes = parseFloat(setting.isha) || 0;
+            times.isha = times.maghrib + ishaMinutes / 60.0;
+        }
+        if (typeof setting.imsak !== 'number') {
+            var imsakMinutes = typeof setting.imsak === 'string' ? parseFloat(setting.imsak) || 0 : 10;
+            times.imsak = times.fajr - imsakMinutes / 60.0;
         }
 
         if (setting.highLats) {
@@ -239,29 +243,32 @@ function PrayTimes(method) {
     }
 
     function computePrayerTimes(times) {
-        times = sunPositionTime(jDate, times);
-        times.asr = asrTime(setting.asrMethod || 1, times.asr);
-        times.fajr = hourAngleTime(setting.fajr, times.fajr);
-        times.isha = hourAngleTime(setting.isha, times.isha);
-        times.imsak = hourAngleTime(setting.imsak || setting.fajr - 10 / 60.0, times.imsak);
-        return times;
+        var riseSet = riseSetAngle();
+        // Minute-based settings (e.g. Makkah isha '90 min') are applied in adjustTimes.
+        var maghribAngle = typeof setting.maghrib === 'number' ? setting.maghrib : riseSet;
+        var ishaAngle = typeof setting.isha === 'number' ? setting.isha : riseSet;
+        var imsakAngle = typeof setting.imsak === 'number' ? setting.imsak : setting.fajr;
+        return {
+            imsak: sunAngleTime(imsakAngle, times.imsak, 'ccw'),
+            fajr: sunAngleTime(setting.fajr, times.fajr, 'ccw'),
+            sunrise: sunAngleTime(riseSet, times.sunrise, 'ccw'),
+            dhuhr: midDay(times.dhuhr),
+            asr: asrTime(setting.asrMethod || 1, times.asr),
+            sunset: sunAngleTime(riseSet, times.sunset),
+            maghrib: sunAngleTime(maghribAngle, times.maghrib),
+            isha: sunAngleTime(ishaAngle, times.isha)
+        };
     }
 
-    function sunPositionTime(jd, times) {
-        for (var i in times) {
-            times[i] = computeTime(15 * (i == 'dhuhr' ? 0 : i == 'sunrise' || i == 'fajr' || i == 'imsak' ? -1 : 1), jd);
-        }
-        return times;
+    // Sun's angle below the horizon at sunrise and sunset: refraction plus solar radius.
+    function riseSetAngle() {
+        return 0.833 + 0.0347 * Math.sqrt(elv);
     }
 
     function asrTime(asrFactor, time) {
-        var decl = sunPosition(jDate + time).decl;
-        var angle = -math.arccot(asrFactor + math.tan(math.dtr(lat - decl)));
-        return computeTime(angle, jDate);
-    }
-
-    function hourAngleTime(angle, time) {
-        return computeTime(90 + angle, jDate);
+        var decl = sunPosition(jDate + time / 24).decl;
+        var angle = -math.arccot(asrFactor + math.tan(Math.abs(lat - decl)));
+        return sunAngleTime(angle, time);
     }
 
     function sunPosition(jd) {
@@ -276,12 +283,18 @@ function PrayTimes(method) {
         return { decl: decl, eqt: eqt };
     }
 
-    function computeTime(angle, jd) {
-        var sun = sunPosition(jd);
-        var eqt = sun.eqt;
-        var decl = sun.decl;
-        var dh = angle != 0 ? 1 / 15 * math.arccos((-math.sin(angle) - math.sin(decl) * math.sin(lat)) / (math.cos(decl) * math.cos(lat))) : 0;
-        return 12 + (angle > 90 || angle < -90 ? -dh : dh) + (lng / 15) - eqt;
+    // Solar noon in hours, before the timezone and longitude shift applied in adjustTimes.
+    function midDay(time) {
+        var eqt = sunPosition(jDate + time / 24).eqt;
+        return math.fixHour(12 - eqt);
+    }
+
+    // Time when the sun is `angle` degrees below the horizon, before ('ccw') or after noon.
+    function sunAngleTime(angle, time, direction) {
+        var decl = sunPosition(jDate + time / 24).decl;
+        var noon = midDay(time);
+        var t = 1 / 15 * math.arccos((-math.sin(angle) - math.sin(decl) * math.sin(lat)) / (math.cos(decl) * math.cos(lat)));
+        return noon + (direction == 'ccw' ? -t : t);
     }
 
     function julian(year, month, day) {
