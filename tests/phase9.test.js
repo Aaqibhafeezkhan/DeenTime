@@ -25,7 +25,11 @@ for (const asset of [
     assert.ok(serviceWorker.includes(asset), `Service worker should reference ${asset}`);
 }
 
-assert.match(serviceWorker, /CACHE_VERSION\s*=\s*['"]deentime-v1\.0\.0['"]/u);
+const version = fs.readFileSync('VERSION', 'utf8').trim();
+assert.ok(
+    serviceWorker.includes(`CACHE_VERSION = 'deentime-v${version}'`),
+    `Service worker cache version should match VERSION (${version})`
+);
 assert.match(serviceWorker, /event\.respondWith/u);
 assert.match(serviceWorker, /index\.html/u);
 
