@@ -76,7 +76,10 @@ function phase7ApplyTasbihState(state) {
     });
 
     const status = document.getElementById('tasbihStatus');
-    if (status) status.textContent = next.dhikr + ': ' + next.count + ' of ' + next.target;
+    if (status) {
+        const reached = next.count === next.target ? '. Target of ' + next.target + ' reached.' : '';
+        status.textContent = next.dhikr + ': ' + next.count + ' of ' + next.target + reached;
+    }
 }
 
 function phase7PersistTasbihState(state) {
