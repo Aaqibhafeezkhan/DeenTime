@@ -529,8 +529,12 @@ function openNameDetails(name) {
     document.getElementById('nameDetailArabic').textContent = name.ar;
     document.getElementById('nameDetailEnglish').textContent = name.en;
     document.getElementById('nameDetailMeaning').textContent = name.meaning;
-    if (typeof dialog.showModal === 'function') dialog.showModal();
-    else dialog.removeAttribute('hidden');
+    if (typeof dialog.showModal === 'function') {
+        dialog.showModal();
+    } else {
+        dialog.removeAttribute('hidden');
+        document.getElementById('closeNameDialog')?.focus();
+    }
 }
 
 function closeNameDetails() {
@@ -538,6 +542,17 @@ function closeNameDetails() {
     if (!dialog) return;
     if (typeof dialog.close === 'function') dialog.close();
     else dialog.setAttribute('hidden', '');
+}
+
+function handleNameDialogKeydown(event) {
+    if (event.key !== 'Escape') return;
+    event.preventDefault();
+    closeNameDetails();
+}
+
+function setupNameDialog() {
+    document.getElementById('closeNameDialog')?.addEventListener('click', closeNameDetails);
+    document.getElementById('nameDetailDialog')?.addEventListener('keydown', handleNameDialogKeydown);
 }
 
 function setupEventListeners() {
@@ -595,7 +610,7 @@ function setupEventListeners() {
     document.getElementById('saveLocationSettings')?.addEventListener('click', saveLocationSettings);
     document.getElementById('resetSettings')?.addEventListener('click', resetSettings);
     document.getElementById('namesSearch')?.addEventListener('input', renderNamesOfAllah);
-    document.getElementById('closeNameDialog')?.addEventListener('click', closeNameDetails);
+    setupNameDialog();
     document.querySelectorAll('[data-tab]').forEach(button => button.addEventListener('click', () => showTab(button.dataset.tab)));
 
     syncSettingsControls();
