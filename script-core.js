@@ -653,13 +653,14 @@ function setSettingsMessage(message, error = false) {
 }
 
 function resetSettings() {
-    if (!window.confirm('Reset DeenTime settings stored on this device?')) return;
+    if (!window.confirm('Reset DeenTime settings stored on this device? This restores the default location, calculation method, and theme, and clears your Tasbih count.')) return;
     safeStorageRemove(SETTINGS_STORAGE_KEY);
     safeStorageRemove(LEGACY_SETTINGS_STORAGE_KEY);
     Object.assign(userSettings, getDefaultSettings());
     tasbihCount = 0;
     safeStorageRemove('deenTimeTasbihState');
     saveSettings();
+    if (typeof phase7ApplyTasbihState === 'function') phase7ApplyTasbihState({ count: 0, target: userSettings.tasbihTarget, dhikr: userSettings.currentDhikr });
     syncSettingsControls();
     initTheme();
     updateLocationDisplay();
