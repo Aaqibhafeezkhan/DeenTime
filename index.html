@@ -137,12 +137,12 @@
 
             <div id="calendarPanel" class="hidden bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-md">
                 <div class="flex items-center justify-between mb-4">
-                    <button type="button" aria-label="Previous month" onclick="changeMonth(-1)" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center">
-                        <i class="fas fa-chevron-left text-gray-600 dark:text-gray-300"></i>
+                    <button type="button" aria-label="Previous month" aria-controls="calendarGrid" onclick="changeMonth(-1)" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center">
+                        <i class="fas fa-chevron-left text-gray-600 dark:text-gray-300" aria-hidden="true"></i>
                     </button>
-                    <h3 id="calendarMonth" class="font-bold text-gray-800 dark:text-white"></h3>
-                    <button type="button" aria-label="Next month" onclick="changeMonth(1)" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center">
-                        <i class="fas fa-chevron-right text-gray-600 dark:text-gray-300"></i>
+                    <h3 id="calendarMonth" class="font-bold text-gray-800 dark:text-white" aria-live="polite"></h3>
+                    <button type="button" aria-label="Next month" aria-controls="calendarGrid" onclick="changeMonth(1)" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center">
+                        <i class="fas fa-chevron-right text-gray-600 dark:text-gray-300" aria-hidden="true"></i>
                     </button>
                 </div>
                 <div id="calendarGrid" class="grid grid-cols-7 gap-1 text-center text-sm"></div>

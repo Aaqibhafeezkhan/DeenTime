@@ -17,6 +17,15 @@ assert.match(locationDisplay[1], /\baria-label="Current prayer location"/u, 'loc
 assert.doesNotMatch(locationDisplay[1], /\baria-hidden="true"/u);
 assert.match(locationDisplay[2], /<i\b[^>]*\bfa-map-marker-alt\b[^>]*\baria-hidden="true"[^>]*>/u, 'map pin should be decorative');
 assert.match(locationDisplay[2], /<span id="locationText">Detecting location\.\.\.<\/span>/u, 'location text should stay exposed for city and coordinate updates');
+const monthButtons = [...html.matchAll(/<button\b([^>]*\bonclick="changeMonth\(-?1\)"[^>]*)>([\s\S]*?)<\/button>/gu)];
+assert.equal(monthButtons.length, 2, 'calendar should have previous and next month buttons');
+assert.deepEqual(monthButtons.map(([, attributes]) => attributes.match(/\baria-label="([^"]+)"/u)?.[1]), ['Previous month', 'Next month'], 'each month button needs a distinct accessible name');
+for (const [, attributes, content] of monthButtons) {
+    assert.match(attributes, /\btype="button"/u, 'month buttons should be plain buttons');
+    assert.match(attributes, /\baria-controls="calendarGrid"/u, 'month buttons should reference the grid they change');
+    assert.match(content, /<i\b[^>]*\baria-hidden="true"[^>]*>/u, 'chevron icons should be decorative');
+}
+assert.match(html, /<h3 id="calendarMonth"[^>]*\baria-live="polite"/u, 'the new month should be announced after navigation');
 assert.match(css, /:focus-visible/u);
 assert.match(css, /prefers-reduced-motion/u);
 
