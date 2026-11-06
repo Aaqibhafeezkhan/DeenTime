@@ -11,21 +11,22 @@ const extract = name => {
 const triggerState = source.match(/^let nameDialogTrigger = null;$/mu);
 assert.ok(triggerState, 'nameDialogTrigger is missing from script-core.js');
 
+// Models a <dialog> as index.html declares it: no attributes, so it starts closed.
+// Like the browser's default styles, it only shows with `open` set and `hidden` unset.
 function createDialog({ native }) {
     const listeners = [];
-    const attributes = new Set(['hidden']);
+    const attributes = new Set();
     const dialog = {
-        open: false,
         listeners,
         addEventListener(type, listener) { listeners.push({ type, listener }); },
         removeAttribute(name) { attributes.delete(name); },
         setAttribute(name) { attributes.add(name); },
         hasAttribute(name) { return attributes.has(name); },
-        isVisible() { return native ? dialog.open : !attributes.has('hidden'); }
+        isVisible() { return attributes.has('open') && !attributes.has('hidden'); }
     };
     if (native) {
-        dialog.showModal = () => { dialog.open = true; };
-        dialog.close = () => { dialog.open = false; };
+        dialog.showModal = () => { attributes.add('open'); };
+        dialog.close = () => { attributes.delete('open'); };
     }
     return dialog;
 }
@@ -80,8 +81,10 @@ for (const native of [true, false]) {
     assert.equal(dialog.listeners.filter(entry => entry.type === 'keydown').length, 1, `${label}: setup should add one keydown listener`);
     assert.equal(closeButton.listeners.filter(entry => entry.type === 'click').length, 1, `${label}: setup should add one close-button click listener`);
 
+    assert.equal(dialog.isVisible(), false, `${label}: the dialog should start closed`);
     open();
     assert.equal(dialog.isVisible(), true, `${label}: opening should show the dialog`);
+    assert.equal(dialog.hasAttribute('open'), true, `${label}: opening should set the open attribute`);
     if (!native) assert.equal(closeButton.focusCount, 1, 'fallback dialog: opening should move focus into the dialog');
 
     const other = pressKey(dialog, 'Enter');
@@ -90,6 +93,7 @@ for (const native of [true, false]) {
 
     const escape = pressKey(dialog, 'Escape');
     assert.equal(dialog.isVisible(), false, `${label}: Escape should close the dialog`);
+    assert.equal(dialog.hasAttribute('open'), false, `${label}: Escape should remove the open attribute`);
     assert.equal(escape.defaultPrevented, true, `${label}: Escape should be handled once`);
     assert.equal(nameButton.focusCount, expectedReturns(1), `${label}: Escape should return focus to the name button`);
 
@@ -97,6 +101,7 @@ for (const native of [true, false]) {
         open();
         closeButton.click();
         assert.equal(dialog.isVisible(), false, `${label}: clicking Close should close the dialog`);
+        assert.equal(dialog.hasAttribute('open'), false, `${label}: clicking Close should remove the open attribute`);
         assert.equal(nameButton.focusCount, expectedReturns(cycle + 2), `${label}: clicking Close should return focus to the name button`);
     }
     assert.equal(dialog.listeners.length, 1, `${label}: repeated open/close cycles should not add listeners`);

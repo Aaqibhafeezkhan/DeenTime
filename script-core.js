@@ -534,6 +534,8 @@ function openNameDetails(name, trigger = document.activeElement) {
         dialog.showModal();
     } else {
         nameDialogTrigger = trigger;
+        // A <dialog> without `open` stays hidden by the browser's default styles.
+        dialog.setAttribute('open', '');
         dialog.removeAttribute('hidden');
         document.getElementById('closeNameDialog')?.focus();
     }
@@ -546,6 +548,7 @@ function closeNameDetails() {
         dialog.close();
         return;
     }
+    dialog.removeAttribute('open');
     dialog.setAttribute('hidden', '');
     // Without showModal() the browser does not restore focus, so return it to the name button.
     nameDialogTrigger?.focus?.();
