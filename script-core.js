@@ -18,6 +18,7 @@ let countdownInterval = null;
 let calendarOffset = 0;
 let tasbihCount = 0;
 let qiblaAngle = 0;
+let nameDialogTrigger = null;
 
 const prayerNames = {
     fajr: { name: 'Fajr', icon: 'fa-cloud-sun', color: 'from-blue-400 to-blue-600' },
@@ -507,7 +508,7 @@ function renderNamesOfAllah() {
         meaning.textContent = name.meaning;
 
         button.append(number, arabic, english, meaning);
-        button.addEventListener('click', () => openNameDetails(name));
+        button.addEventListener('click', () => openNameDetails(name, button));
         container.appendChild(button);
     });
 
@@ -522,22 +523,47 @@ function renderNamesOfAllah() {
     }
 }
 
-function openNameDetails(name) {
+function openNameDetails(name, trigger = document.activeElement) {
     const dialog = document.getElementById('nameDetailDialog');
     if (!dialog) return;
     document.getElementById('nameDetailNumber').textContent = `Name ${name.number}`;
     document.getElementById('nameDetailArabic').textContent = name.ar;
     document.getElementById('nameDetailEnglish').textContent = name.en;
     document.getElementById('nameDetailMeaning').textContent = name.meaning;
-    if (typeof dialog.showModal === 'function') dialog.showModal();
-    else dialog.removeAttribute('hidden');
+    if (typeof dialog.showModal === 'function') {
+        dialog.showModal();
+    } else {
+        nameDialogTrigger = trigger;
+        // A <dialog> without `open` stays hidden by the browser's default styles.
+        dialog.setAttribute('open', '');
+        dialog.removeAttribute('hidden');
+        document.getElementById('closeNameDialog')?.focus();
+    }
 }
 
 function closeNameDetails() {
     const dialog = document.getElementById('nameDetailDialog');
     if (!dialog) return;
-    if (typeof dialog.close === 'function') dialog.close();
-    else dialog.setAttribute('hidden', '');
+    if (typeof dialog.close === 'function') {
+        dialog.close();
+        return;
+    }
+    dialog.removeAttribute('open');
+    dialog.setAttribute('hidden', '');
+    // Without showModal() the browser does not restore focus, so return it to the name button.
+    nameDialogTrigger?.focus?.();
+    nameDialogTrigger = null;
+}
+
+function handleNameDialogKeydown(event) {
+    if (event.key !== 'Escape') return;
+    event.preventDefault();
+    closeNameDetails();
+}
+
+function setupNameDialog() {
+    document.getElementById('closeNameDialog')?.addEventListener('click', closeNameDetails);
+    document.getElementById('nameDetailDialog')?.addEventListener('keydown', handleNameDialogKeydown);
 }
 
 function setupEventListeners() {
@@ -595,7 +621,7 @@ function setupEventListeners() {
     document.getElementById('saveLocationSettings')?.addEventListener('click', saveLocationSettings);
     document.getElementById('resetSettings')?.addEventListener('click', resetSettings);
     document.getElementById('namesSearch')?.addEventListener('input', renderNamesOfAllah);
-    document.getElementById('closeNameDialog')?.addEventListener('click', closeNameDetails);
+    setupNameDialog();
     document.querySelectorAll('[data-tab]').forEach(button => button.addEventListener('click', () => showTab(button.dataset.tab)));
 
     syncSettingsControls();
