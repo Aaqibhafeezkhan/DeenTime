@@ -475,11 +475,14 @@ function setDhikr(dhikr) {
 function renderNamesOfAllah() {
     const container = document.getElementById('namesList');
     if (!container || !Array.isArray(namesOfAllah)) return;
-    const query = (document.getElementById('namesSearch')?.value || '').trim().toLocaleLowerCase();
+    // Compare without case or combining marks so "Raḥmān" finds "Rahman" and harakat don't block Arabic matches.
+    const normalize = text => text.normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase();
+    const query = (document.getElementById('namesSearch')?.value || '').trim();
+    const normalizedQuery = normalize(query);
     const filtered = namesOfAllah.filter(name =>
-        name.en.toLocaleLowerCase().includes(query) ||
-        name.meaning.toLocaleLowerCase().includes(query) ||
-        name.ar.includes(query)
+        normalize(name.en).includes(normalizedQuery) ||
+        normalize(name.meaning).includes(normalizedQuery) ||
+        normalize(name.ar).includes(normalizedQuery)
     );
 
     container.innerHTML = '';
