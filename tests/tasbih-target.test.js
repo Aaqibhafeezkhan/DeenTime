@@ -6,10 +6,12 @@ const vm = require('node:vm');
 const source = fs.readFileSync(path.join(__dirname, '..', 'phase7.js'), 'utf8');
 
 function createElement(id) {
+    const attributes = {};
     return {
         id,
         textContent: '',
-        setAttribute() {},
+        attributes,
+        setAttribute(name, value) { attributes[name] = String(value); },
         classList: { toggle() {} },
         appendChild(element) { elements[element.id] = element; }
     };
@@ -46,6 +48,15 @@ const status = () => elements.tasbihStatus.textContent;
 const vibrations = [];
 const context = createContext({ vibrate: duration => vibrations.push(duration) });
 const run = code => vm.runInContext(code, context);
+
+// Only #tasbihStatus may announce, so each count update is spoken once.
+assert.deepEqual(
+    { role: elements.tasbihStatus.attributes.role, live: elements.tasbihStatus.attributes['aria-live'], atomic: elements.tasbihStatus.attributes['aria-atomic'] },
+    { role: 'status', live: 'polite', atomic: 'true' },
+    'the status should be the polite, atomic live region'
+);
+run('incrementTasbih(); resetTasbih();');
+assert.deepEqual(elements.tasbihCount.attributes, {}, 'the visible count should not be a second live region or carry an aria-label');
 
 run('setDhikr("Alhamdulillah"); for (let i = 0; i < 32; i++) incrementTasbih();');
 assert.equal(status(), 'Alhamdulillah: 32 of 33', 'below the target the status should stay short');

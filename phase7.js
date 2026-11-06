@@ -42,10 +42,7 @@ function phase7ApplyTasbihState(state) {
     userSettings.currentDhikr = next.dhikr;
 
     const count = document.getElementById('tasbihCount');
-    if (count) {
-        count.textContent = String(next.count);
-        count.setAttribute('aria-label', 'Tasbih count: ' + next.count);
-    }
+    if (count) count.textContent = String(next.count);
 
     document.querySelectorAll('.tasbih-target').forEach(button => {
         const active = Number(button.textContent.trim()) === next.target;
@@ -113,12 +110,8 @@ function setupPhase7Tasbih() {
     const panel = document.getElementById('tasbihPanel');
     if (!panel) return;
 
-    const count = document.getElementById('tasbihCount');
-    if (count) {
-        count.setAttribute('role', 'status');
-        count.setAttribute('aria-live', 'polite');
-    }
-
+    // #tasbihStatus is the only live region: it carries the count and the
+    // target-reached message, so #tasbihCount stays visual and is not announced twice.
     let status = document.getElementById('tasbihStatus');
     if (!status) {
         status = document.createElement('p');
@@ -126,6 +119,7 @@ function setupPhase7Tasbih() {
         status.className = 'text-center text-sm text-gray-500 dark:text-gray-400 mt-3';
         status.setAttribute('role', 'status');
         status.setAttribute('aria-live', 'polite');
+        status.setAttribute('aria-atomic', 'true');
         panel.querySelector('.text-center').appendChild(status);
     }
 
