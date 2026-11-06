@@ -44,7 +44,28 @@ function createHarness(confirmAnswer) {
 const cancelled = createHarness(false);
 assert.equal(cancelled.prompts.length, 1, 'reset should ask for confirmation');
 assert.match(cancelled.prompts[0], /settings/iu, 'confirmation should say settings will be reset');
-assert.match(cancelled.prompts[0], /Tasbih/u, 'confirmation should say the Tasbih count will be cleared');
+assert.match(cancelled.prompts[0], /Tasbih count/u, 'confirmation should say the Tasbih count will be cleared');
+
+// Every setting that reset restores must be named in the prompt, so a new default cannot be reset unannounced.
+const defaultsSource = source.match(/function getDefaultSettings\(\) \{[\s\S]*?\n\}/u);
+assert.ok(defaultsSource, 'getDefaultSettings is missing from script-core.js');
+const realDefaults = vm.runInNewContext(`${defaultsSource[0]}; getDefaultSettings()`);
+const promptWordFor = {
+    location: /location/iu,
+    locationName: /location/iu,
+    timeZone: /location/iu,
+    calcMethod: /calculation method/iu,
+    madhab: /madhab/iu,
+    notifications: /notifications off/iu,
+    timeFormat: /time format/iu,
+    theme: /theme/iu,
+    tasbihTarget: /Tasbih target/u,
+    currentDhikr: /dhikr/iu
+};
+for (const key of Object.keys(realDefaults)) {
+    assert.ok(promptWordFor[key], `add a prompt check for the new default "${key}"`);
+    assert.match(cancelled.prompts[0], promptWordFor[key], `confirmation should mention the reset of ${key}`);
+}
 assert.equal(cancelled.storage.size, 4, 'cancel should leave stored data unchanged');
 assert.equal(cancelled.context.userSettings.calcMethod, 'ISNA', 'cancel should leave settings unchanged');
 assert.equal(cancelled.context.tasbihCount, 17, 'cancel should leave the Tasbih count unchanged');

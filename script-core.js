@@ -653,7 +653,7 @@ function setSettingsMessage(message, error = false) {
 }
 
 function resetSettings() {
-    if (!window.confirm('Reset DeenTime settings stored on this device? This restores the default location, calculation method, and theme, and clears your Tasbih count.')) return;
+    if (!window.confirm('Reset DeenTime settings stored on this device? This restores the default location, calculation method, madhab, time format, theme, Tasbih target and dhikr, turns notifications off, and clears your Tasbih count.')) return;
     safeStorageRemove(SETTINGS_STORAGE_KEY);
     safeStorageRemove(LEGACY_SETTINGS_STORAGE_KEY);
     Object.assign(userSettings, getDefaultSettings());
