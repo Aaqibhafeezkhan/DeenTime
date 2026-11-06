@@ -18,6 +18,7 @@ let countdownInterval = null;
 let calendarOffset = 0;
 let tasbihCount = 0;
 let qiblaAngle = 0;
+let nameDialogTrigger = null;
 
 const prayerNames = {
     fajr: { name: 'Fajr', icon: 'fa-cloud-sun', color: 'from-blue-400 to-blue-600' },
@@ -507,7 +508,7 @@ function renderNamesOfAllah() {
         meaning.textContent = name.meaning;
 
         button.append(number, arabic, english, meaning);
-        button.addEventListener('click', () => openNameDetails(name));
+        button.addEventListener('click', () => openNameDetails(name, button));
         container.appendChild(button);
     });
 
@@ -522,7 +523,7 @@ function renderNamesOfAllah() {
     }
 }
 
-function openNameDetails(name) {
+function openNameDetails(name, trigger = document.activeElement) {
     const dialog = document.getElementById('nameDetailDialog');
     if (!dialog) return;
     document.getElementById('nameDetailNumber').textContent = `Name ${name.number}`;
@@ -532,6 +533,7 @@ function openNameDetails(name) {
     if (typeof dialog.showModal === 'function') {
         dialog.showModal();
     } else {
+        nameDialogTrigger = trigger;
         dialog.removeAttribute('hidden');
         document.getElementById('closeNameDialog')?.focus();
     }
@@ -540,8 +542,14 @@ function openNameDetails(name) {
 function closeNameDetails() {
     const dialog = document.getElementById('nameDetailDialog');
     if (!dialog) return;
-    if (typeof dialog.close === 'function') dialog.close();
-    else dialog.setAttribute('hidden', '');
+    if (typeof dialog.close === 'function') {
+        dialog.close();
+        return;
+    }
+    dialog.setAttribute('hidden', '');
+    // Without showModal() the browser does not restore focus, so return it to the name button.
+    nameDialogTrigger?.focus?.();
+    nameDialogTrigger = null;
 }
 
 function handleNameDialogKeydown(event) {
