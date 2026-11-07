@@ -56,6 +56,7 @@ function phase4UpdateCountdown() {
 function updateNextPrayer() {
     const now = new Date();
     const next = phase4FindNextPrayer(now);
+    const wasScheduled = phase4NextPrayerAt !== null;
     const prayerChanged = phase4NextPrayerKey !== next.key || !phase4NextPrayerAt || phase4NextPrayerAt.getTime() !== next.target.getTime();
 
     phase4NextPrayerKey = next.key;
@@ -64,6 +65,12 @@ function updateNextPrayer() {
     document.getElementById('nextPrayerName').textContent = prayerNames[next.key].name;
     document.getElementById('nextPrayerTime').textContent = next.time;
     phase4UpdateCountdown();
+
+    // Announce only real changes (not the first render, not per-second ticks).
+    const statusElement = document.getElementById('nextPrayerStatus');
+    if (prayerChanged && wasScheduled && statusElement) {
+        statusElement.textContent = `Next prayer: ${prayerNames[next.key].name} at ${next.time}`;
+    }
 
     if (prayerChanged && typeof renderPrayerTimes === 'function') {
         renderPrayerTimes();
