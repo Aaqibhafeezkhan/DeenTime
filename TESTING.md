@@ -49,6 +49,7 @@ Verify:
 - Tasbih state persists and reset clears local state
 - Names search and name detail interaction work with keyboard input
 - browser zoom remains available
+- with the OS reduced-motion setting enabled (for example, Windows "Show animations in Windows" off, or macOS "Reduce motion"), reload the app: the loading screen still shows "Loading prayer times..." with a ring that does not keep spinning, and the prayer card and countdown settle without looping
 - service-worker shell fallback works after a successful online load
 - core app works after the network is disabled
 - notification permission remains optional
