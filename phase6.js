@@ -102,6 +102,50 @@ function updateCurrentTime() {
     }
 }
 
+let calendarFocusDay = null;
+
+function getCalendarKeyTarget(year, month, day, key) {
+    const steps = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 };
+    if (!Object.prototype.hasOwnProperty.call(steps, key)) return null;
+    const target = new Date(Date.UTC(year, month, day + steps[key]));
+    const targetYear = target.getUTCFullYear();
+    const targetMonth = target.getUTCMonth();
+    return {
+        year: targetYear,
+        month: targetMonth,
+        day: target.getUTCDate(),
+        monthDelta: (targetYear - year) * 12 + (targetMonth - month)
+    };
+}
+
+function focusCalendarDay() {
+    const grid = document.getElementById('calendarGrid');
+    if (!grid) return;
+    let target = null;
+    grid.querySelectorAll('.calendar-day').forEach(cell => {
+        cell.tabIndex = -1;
+        if (Number(cell.dataset.day) === calendarFocusDay) target = cell;
+    });
+    if (target) {
+        target.tabIndex = 0;
+        target.focus();
+    }
+}
+
+function handleCalendarKeydown(event) {
+    const cell = event.target.closest ? event.target.closest('.calendar-day') : null;
+    if (!cell) return;
+    const target = getCalendarKeyTarget(Number(cell.dataset.year), Number(cell.dataset.month), Number(cell.dataset.day), event.key);
+    if (!target) return;
+    event.preventDefault();
+    if (target.monthDelta !== 0) {
+        changeMonth(target.monthDelta, target.day);
+    } else {
+        calendarFocusDay = target.day;
+    }
+    focusCalendarDay();
+}
+
 function renderCalendar() {
     const now = new Date();
     const nowParts = getTimeZoneDateParts(now);
@@ -119,7 +163,14 @@ function renderCalendar() {
     if (heading) heading.textContent = `${gregorianMonthNames[month]} ${year} · ${firstHijri.monthName} ${firstHijri.year} AH`;
     const grid = document.getElementById('calendarGrid');
     if (!grid) return;
+    if (!grid.dataset.keyboardNav) {
+        grid.dataset.keyboardNav = 'true';
+        grid.addEventListener('keydown', handleCalendarKeydown);
+    }
     grid.innerHTML = '';
+    const todayInMonth = year === nowParts.year && month + 1 === nowParts.month;
+    const focusDay = Math.min(calendarFocusDay || (todayInMonth ? nowParts.day : 1), daysInMonth);
+    calendarFocusDay = focusDay;
     ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].forEach(dayName => {
         const cell = document.createElement('div');
         cell.className = 'text-xs font-bold text-gray-400 p-2';
@@ -134,14 +185,20 @@ function renderCalendar() {
         const isToday = year === nowParts.year && month + 1 === nowParts.month && day === nowParts.day;
         const cell = document.createElement('div');
         cell.className = `calendar-day p-2 rounded-lg ${isToday ? 'bg-teal-500 text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`;
+        cell.setAttribute('role', 'button');
         cell.setAttribute('aria-label', `${formatGregorianDate(cellDate)}, ${formatHijriDate(hijri)}`);
+        cell.dataset.year = String(year);
+        cell.dataset.month = String(month);
+        cell.dataset.day = String(day);
+        cell.tabIndex = day === focusDay ? 0 : -1;
         cell.innerHTML = `<div class="font-bold">${day}</div><div class="text-xs opacity-70">${hijri.day} ${hijri.monthName}</div>`;
         grid.appendChild(cell);
     }
     if (firstHijri.month !== lastHijri.month && heading) heading.textContent = `${gregorianMonthNames[month]} ${year} · ${firstHijri.monthName}–${lastHijri.monthName} ${lastHijri.year} AH`;
 }
 
-function changeMonth(delta) {
+function changeMonth(delta, focusDay = null) {
     calendarOffset += delta;
+    calendarFocusDay = focusDay;
     renderCalendar();
 }
