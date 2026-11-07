@@ -146,6 +146,12 @@ function handleCalendarKeydown(event) {
     focusCalendarDay();
 }
 
+function createCalendarRow() {
+    const row = document.createElement('div');
+    row.setAttribute('role', 'row');
+    return row;
+}
+
 function renderCalendar() {
     const now = new Date();
     const nowParts = getTimeZoneDateParts(now);
@@ -171,28 +177,43 @@ function renderCalendar() {
     const todayInMonth = year === nowParts.year && month + 1 === nowParts.month;
     const focusDay = Math.min(calendarFocusDay || (todayInMonth ? nowParts.day : 1), daysInMonth);
     calendarFocusDay = focusDay;
-    ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].forEach(dayName => {
-        const cell = document.createElement('div');
-        cell.className = 'text-xs font-bold text-gray-400 p-2';
-        cell.textContent = dayName;
-        cell.setAttribute('aria-hidden', 'true');
-        grid.appendChild(cell);
+    const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    let row = createCalendarRow();
+    grid.appendChild(row);
+    weekdayNames.forEach(dayName => {
+        const header = document.createElement('div');
+        header.className = 'text-xs font-bold text-gray-400 p-2';
+        header.setAttribute('role', 'columnheader');
+        header.setAttribute('aria-label', dayName);
+        header.textContent = dayName.slice(0, 2);
+        row.appendChild(header);
     });
-    for (let i = 0; i < startingDay; i++) grid.appendChild(document.createElement('div'));
+    row = createCalendarRow();
+    grid.appendChild(row);
+    for (let i = 0; i < startingDay; i++) {
+        const blank = document.createElement('div');
+        blank.setAttribute('role', 'gridcell');
+        blank.setAttribute('aria-hidden', 'true');
+        row.appendChild(blank);
+    }
     for (let day = 1; day <= daysInMonth; day++) {
+        if (row.children.length === 7) {
+            row = createCalendarRow();
+            grid.appendChild(row);
+        }
         const cellDate = zonedTimeToDate(year, month + 1, day, 12, 0, userSettings.timeZone);
         const hijri = gregorianToHijri(cellDate);
         const isToday = year === nowParts.year && month + 1 === nowParts.month && day === nowParts.day;
         const cell = document.createElement('div');
         cell.className = `calendar-day p-2 rounded-lg ${isToday ? 'bg-teal-500 text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`;
-        cell.setAttribute('role', 'button');
+        cell.setAttribute('role', 'gridcell');
         cell.setAttribute('aria-label', `${formatGregorianDate(cellDate)}, ${formatHijriDate(hijri)}`);
         cell.dataset.year = String(year);
         cell.dataset.month = String(month);
         cell.dataset.day = String(day);
         cell.tabIndex = day === focusDay ? 0 : -1;
         cell.innerHTML = `<div class="font-bold">${day}</div><div class="text-xs opacity-70">${hijri.day} ${hijri.monthName}</div>`;
-        grid.appendChild(cell);
+        row.appendChild(cell);
     }
     if (firstHijri.month !== lastHijri.month && heading) heading.textContent = `${gregorianMonthNames[month]} ${year} · ${firstHijri.monthName}–${lastHijri.monthName} ${lastHijri.year} AH`;
 }
