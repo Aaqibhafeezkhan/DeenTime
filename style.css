@@ -76,9 +76,12 @@ body {
     transform: translateY(-2px);
 }
 
-/* Week rows exist for ARIA grid structure only; their cells keep laying out in the 7-column grid. */
+/* Keep ARIA rows in the accessibility tree and align each row's cells to the calendar columns. */
 #calendarGrid [role="row"] {
-    display: contents;
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: inherit;
 }
 
 .calendar-day {

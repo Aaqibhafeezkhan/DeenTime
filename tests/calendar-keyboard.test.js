@@ -16,7 +16,11 @@ const extract = (source, name) => {
 // Markup and styles that the calendar's grid semantics depend on.
 assert.match(html, /<div id="calendarGrid"[^>]*\brole="grid"/u, 'the calendar container should be a grid');
 assert.match(html, /<div id="calendarGrid"[^>]*\baria-labelledby="calendarMonth"/u, 'the grid should be named by the month heading');
-assert.match(css, /#calendarGrid \[role="row"\]\s*\{\s*display:\s*contents;/u, 'week rows must not break the 7-column layout');
+assert.match(
+    css,
+    /#calendarGrid \[role="row"\]\s*\{[^}]*display:\s*grid;[^}]*grid-column:\s*1\s*\/\s*-1;[^}]*grid-template-columns:\s*repeat\(7,\s*minmax\(0,\s*1fr\)\);/u,
+    'week rows should remain layout boxes spanning the seven calendar columns'
+);
 
 // A fixed clock keeps the test independent of the real date: today is 15 January 2026.
 const FIXED_NOW = Date.UTC(2026, 0, 15, 12);
