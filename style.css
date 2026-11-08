@@ -76,6 +76,14 @@ body {
     transform: translateY(-2px);
 }
 
+/* Keep ARIA rows in the accessibility tree and align each row's cells to the calendar columns. */
+#calendarGrid [role="row"] {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: inherit;
+}
+
 .calendar-day {
     aspect-ratio: 1;
     display: flex;
